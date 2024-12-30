@@ -1,13 +1,15 @@
 <template>
   <div class="game-row-wrapper">
     <v-hover v-slot="{ isHovering, props }">
-      <v-row v-bind="props" :class="['game-row', { 'highlighted': isHovering }]" @click="emitClick">
-        <v-col cols="8">{{ game.name }}</v-col>
-        <v-col cols="4" class="text-right d-flex align-center justify-end">
-          <v-icon size="small" class="mr-1">mdi-account</v-icon>
-          {{ game.players.length }}
-        </v-col>
-      </v-row>
+      <v-card v-bind="props" :elevation="isHovering ? 2 : 1" class="game-row mx-2" @click="emitClick">
+        <v-card-text class="d-flex justify-space-between align-center py-2">
+          <div>{{ game.name }}</div>
+          <div class="d-flex align-center">
+            <v-icon size="small" class="mr-1">mdi-account</v-icon>
+            {{ game.players.length }}
+          </div>
+        </v-card-text>
+      </v-card>
     </v-hover>
   </div>
 </template>
@@ -36,10 +38,10 @@ export default defineComponent({
 <style scoped>
 .game-row {
   cursor: pointer;
-  padding: 8px;
+  transition: all 0.2s ease;
 }
 
-.game-row.highlighted {
-  background-color: #f3f3f3;
+.game-row:hover {
+  transform: translateY(-1px);
 }
 </style>

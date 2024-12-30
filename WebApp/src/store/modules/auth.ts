@@ -1,42 +1,42 @@
 import { Module } from 'vuex'
 import { auth } from '../../../firebase'
 import { User } from 'firebase/auth'
+import { RootState, AuthState } from '../types'
 
-interface AuthState {
-  user: User | null
-  loading: boolean
-}
-
-const authModule: Module<AuthState, any> = {
+const authModule: Module<AuthState, RootState> = {
   namespaced: true,
   
-  state: () => ({
+  state: (): AuthState => ({
     user: null,
     loading: true
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
-    currentUser: (state) => state.user,
-    isGuest: (state) => state.user?.isAnonymous || false,
-    userName: (state) => state.user?.displayName || ''
+    isAuthenticated: (state: any): boolean => !!state.user,
+    currentUser: (state: any): User | null => state.user,
+    isGuest: (state: any): boolean => state.user?.isAnonymous || false,
+    userName: (state: any): string => state.user?.displayName || ''
   },
 
   mutations: {
-    SET_USER(state, user: User | null) {
+    SET_USER(state: any, user: User | null) {
       state.user = user
     },
-    SET_LOADING(state, loading: boolean) {
+    SET_LOADING(state: any, loading: boolean) {
       state.loading = loading
     }
   },
 
   actions: {
-    init({ commit }) {
+    init({ commit }: any) {
       auth.onAuthStateChanged((user) => {
         commit('SET_USER', user)
         commit('SET_LOADING', false)
       })
+    },
+
+    setUser({ commit }: any, user: User | null) {
+      commit('SET_USER', user)
     }
   }
 }

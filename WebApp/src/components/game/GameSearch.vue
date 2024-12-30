@@ -1,8 +1,12 @@
 <template>
   <div class="search-wrapper px-4 py-2">
-    <v-text-field :model-value="searchQuery" prepend-inner-icon="mdi-magnify" placeholder="Search games..."
-      variant="outlined" density="compact" hide-details class="search-field" bg-color="white"
-      @update:model-value="onModelValueUpdate" />
+    <v-card flat color="surface-variant">
+      <v-container class="px-2">
+        <v-text-field :model-value="searchQuery" prepend-inner-icon="mdi-magnify" placeholder="Search games..."
+          variant="outlined" density="compact" hide-details bg-color="surface"
+          @update:model-value="onModelValueUpdate" />
+      </v-container>
+    </v-card>
   </div>
 </template>
 
@@ -28,12 +32,7 @@ export default defineComponent({
 
 <style scoped>
 .search-wrapper {
-  background-color: #f8f9fa;
-}
-
-.search-field {
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: var(--v-surface-variant);
 }
 
 :deep(.v-field) {
