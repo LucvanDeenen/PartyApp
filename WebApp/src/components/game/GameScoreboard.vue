@@ -1,75 +1,48 @@
 <template>
-  <v-card>
-    <v-card-title class="text-center text-h5 py-4">
-      {{ title }}
-    </v-card-title>
-
-    <v-divider></v-divider>
-
-    <v-list>
-      <v-list-item v-for="playerDetails in sortedPlayers" :key="playerDetails.player.id"
-        :class="{ 'first-place': playerDetails.score === highestScore }">
-        <v-list-item-title>
-          <v-icon v-if="playerDetails.score === highestScore" color="accent" class="mb-1" icon="mdi-crown"></v-icon>
-          {{ playerDetails.player.name }}
-        </v-list-item-title>
-
-        <template v-slot:append>
-          <div class="d-flex align-center">
-            <v-icon color="accent" size="small" class="mr-1">
-              mdi-star
-            </v-icon>
-            <span class="text-h6">{{ playerDetails.score }}</span>
-          </div>
-        </template>
-      </v-list-item>
-    </v-list>
-  </v-card>
+  <v-list class="scoreboard-list">
+    <v-list-item v-for="playerDetails in sortedPlayers" :key="playerDetails.player.id"
+      :class="getPlayerClass(playerDetails)">
+      <player-score-row :player-details="playerDetails" :is-leader="playerDetails.score === highestScore"
+        :game-id="gameId" />
+    </v-list-item>
+  </v-list>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PlayerScore } from '../../types/game'
+import PlayerScoreRow from './PlayerScoreRow.vue'
+import { useScoreboard } from '../../composables/useScoreboard'
 
 export default defineComponent({
   name: 'GameScoreboard',
+  components: {
+    PlayerScoreRow
+  },
   props: {
-    title: {
-      type: String,
-      required: true
-    },
     players: {
       type: Array as () => PlayerScore[],
       required: true
-    }
-  },
-  computed: {
-    sortedPlayers(): PlayerScore[] {
-      return [...this.players].sort((a, b) => b.score - a.score)
     },
-
-    highestScore(): number {
-      return Math.max(...this.players.map(p => p.score))
+    gameId: {
+      type: String,
+      required: true
     }
   },
-  methods: {
-    getInitials(name: string): string {
-      return name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-    }
+  setup(props) {
+    const { sortedPlayers, highestScore, getPlayerClass } = useScoreboard(props.players)
+    return { sortedPlayers, highestScore, getPlayerClass }
   }
 })
 </script>
 
-
 <style scoped>
-.first-place {
-  background-color: rgba(255, 193, 7, 0.1);
+.scoreboard-list {
+  height: 100%;
+  background: transparent;
 }
 
-.position-relative {
-  position: relative;
+.leader {
+  background-color: rgba(255, 193, 7, 0.1);
 }
 </style>

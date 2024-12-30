@@ -2,7 +2,9 @@
   <v-app>
     <navigation v-if="showNavigation" />
     <v-main>
-      <router-view />
+      <page-transition>
+        <router-view />
+      </page-transition>
     </v-main>
   </v-app>
 </template>
@@ -10,11 +12,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Navigation from './components/layout/Navigation.vue'
+import PageTransition from './components/transitions/PageTransition.vue'
 
 export default defineComponent({
   name: 'AppRoot',
   components: {
-    Navigation
+    Navigation,
+    PageTransition
   },
   computed: {
     showNavigation(): boolean {

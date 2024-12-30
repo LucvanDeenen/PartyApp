@@ -12,5 +12,5 @@ export interface Game {
   id: string
   name: string
   players: PlayerScore[]
-  created: string
+  round: number
 }

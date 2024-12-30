@@ -38,7 +38,6 @@
     </v-row>
 
     <guest-name-prompt v-model:show="showGuestPrompt" @submit="handleGuestLogin" />
-
   </v-container>
 </template>
 
@@ -62,17 +61,27 @@ export default defineComponent({
       showGuestPrompt: false
     }
   },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated'])
+  },
+  watch: {
+    isAuthenticated: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          const redirect = this.$route.query.redirect as string || '/games'
+          this.$router.push(redirect)
+        }
+      }
+    }
+  },
   methods: {
-    ...mapGetters('auth', ['currentUser']),
     ...mapActions('auth', ['signIn', 'signInAsGuest']),
     async handleLogin() {
       try {
         this.loading = true
         this.error = ''
-        await this.signIn(this.email, this.password)
-
-        const redirect = (this.$route.query.redirect as string) || '/games'
-        this.$router.push(redirect)
+        await this.signIn({ email: this.email, password: this.password })
       } catch (e) {
         this.error = 'Invalid email or password. Please try again.'
       } finally {
@@ -84,12 +93,8 @@ export default defineComponent({
       try {
         this.loading = true
         this.error = ''
-
         await this.signInAsGuest(guestName)
         this.showGuestPrompt = false
-
-        const redirect = (this.$route.query.redirect as string) || '/games'
-        this.$router.push(redirect)
       } catch (e) {
         this.error = 'Guest login failed. Please try again.'
       } finally {
