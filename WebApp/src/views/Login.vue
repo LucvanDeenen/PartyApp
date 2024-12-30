@@ -39,7 +39,19 @@
               Login
             </v-btn>
 
-            <div v-if="error" class="text-danger text-center mt-2">
+            <v-btn
+              block
+              variant="tonal"
+              size="large"
+              class="mt-2"
+              :loading="loading"
+              :disabled="loading"
+              @click="showGuestPrompt = true"
+            >
+              Continue as Guest
+            </v-btn>
+
+            <div v-if="error" class="text-error text-center mt-2">
               {{ error }}
             </div>
 
@@ -51,31 +63,59 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <guest-name-prompt
+      v-model:show="showGuestPrompt"
+      @submit="handleGuestLogin"
+    />
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../stores/auth'
+import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
 const router = useRouter()
-const { login } = useAuth()
+const route = useRoute()
+const { login, loginAsGuest } = useAuth()
 
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
+const showGuestPrompt = ref(false)
 
 const handleLogin = async () => {
   try {
     loading.value = true
     error.value = ''
     await login(email.value, password.value)
-    router.push('/games')
+    
+    // Redirect to the intended destination or default to /games
+    const redirect = route.query.redirect as string || '/games'
+    router.push(redirect)
   } catch (e) {
     error.value = 'Invalid email or password. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleGuestLogin = async (guestName: string) => {
+  try {
+    loading.value = true
+    error.value = ''
+    await loginAsGuest(guestName)
+    showGuestPrompt.value = false
+    
+    // Redirect to the intended destination or default to /games
+    const redirect = route.query.redirect as string || '/games'
+    router.push(redirect)
+  } catch (e) {
+    error.value = 'Guest login failed. Please try again.'
   } finally {
     loading.value = false
   }

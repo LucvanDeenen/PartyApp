@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { requireAuth } from './guards'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Games from '../views/Games.vue'
@@ -10,7 +11,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/games'
     },
     {
       path: '/login',
@@ -25,18 +26,21 @@ const router = createRouter({
     {
       path: '/games',
       name: 'games',
-      component: Games
+      component: Games,
+      beforeEnter: requireAuth
     },
     {
       path: '/games/:id',
       name: 'game-details',
       component: GameDetails,
-      props: true
+      props: true,
+      beforeEnter: requireAuth
     },
     {
       path: '/profile',
       name: 'profile',
-      component: Profile
+      component: Profile,
+      beforeEnter: requireAuth
     }
   ]
 })

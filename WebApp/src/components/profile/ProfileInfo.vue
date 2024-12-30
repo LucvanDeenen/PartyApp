@@ -7,7 +7,10 @@
           <template v-slot:prepend>
             <v-icon color="primary">mdi-account</v-icon>
           </template>
-          <v-list-item-title>{{ user?.name }}</v-list-item-title>
+          <v-list-item-title class="d-flex align-center">
+            {{ user?.name }}
+            <profile-name-edit v-if="!user?.isGuest" />
+          </v-list-item-title>
           <v-list-item-subtitle>Name</v-list-item-subtitle>
         </v-list-item>
 
@@ -15,7 +18,7 @@
           <template v-slot:prepend>
             <v-icon color="primary">mdi-email</v-icon>
           </template>
-          <v-list-item-title>{{ user?.email }}</v-list-item-title>
+          <v-list-item-title>{{ user?.email || 'Not available' }}</v-list-item-title>
           <v-list-item-subtitle>Email</v-list-item-subtitle>
         </v-list-item>
 
@@ -34,6 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuth } from '../../stores/auth'
+import ProfileNameEdit from './ProfileNameEdit.vue'
 
 const { user } = useAuth()
 const memberSince = computed(() => new Date().toLocaleDateString())

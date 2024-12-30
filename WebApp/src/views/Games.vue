@@ -18,37 +18,66 @@
 
       <game-search @search="handleSearch" />
 
-      <game-row
-        v-for="game in games"
-        :key="game.id"
-        :game="game"
-        @click="navigateToGame(game)"
-      />
+      <div v-if="loading" class="d-flex justify-center pa-4">
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      </div>
+
+      <div v-else-if="error" class="text-center pa-4 text-error">
+        {{ error }}
+      </div>
+
+      <template v-else>
+        <game-row
+          v-for="game in games"
+          :key="game.id"
+          :game="game"
+          @click="navigateToGame(game)"
+        />
+      </template>
     </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import GameRow from '../components/GameRow.vue'
 import GameSearch from '../components/GameSearch.vue'
 import { useGames } from '../stores/games'
 import type { Game } from '../types/game'
 
-const router = useRouter()
-const { games, setSearchQuery } = useGames()
+// Local state in this component
+const games = ref<Game[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
 
+// Pull getGames from the minimal composable/store
+const { getGames } = useGames()
+
+onMounted(async () => {
+  try {
+    loading.value = true
+    games.value = await getGames()
+  } catch (err) {
+    error.value = (err as Error).message
+  } finally {
+    loading.value = false
+  }
+})
+
+const router = useRouter()
 const navigateToGame = (game: Game) => {
   router.push(`/games/${game.id}`)
 }
 
+// Placeholder for creation logic
 const createNewGame = () => {
-  // Implement new game creation logic
   console.log('Creating new game')
 }
 
+// Placeholder for search logic
 const handleSearch = (query: string) => {
-  setSearchQuery(query)
+  console.log('Searching for:', query)
 }
 </script>
 
@@ -69,17 +98,14 @@ const handleSearch = (query: string) => {
 .games-list::-webkit-scrollbar {
   width: 8px;
 }
-
 .games-list::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
-
 .games-list::-webkit-scrollbar-thumb {
   background: rgb(25, 118, 210);
   border-radius: 4px;
 }
-
 .games-list::-webkit-scrollbar-thumb:hover {
   background: rgb(0, 255, 255);
 }

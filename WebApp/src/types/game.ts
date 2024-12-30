@@ -1,24 +1,16 @@
 export interface Player {
-  id: number
+  id: string
   name: string
-  points: number
-  avatar?: string
+}
+
+export interface PlayerScore {
+  player: Player
+  score: number
 }
 
 export interface Game {
-  id: number
-  title: string
-  genre: string
-  imageUrl: string
-  description: string
-  players: {
-    current: number
-    max: number
-    list: Player[]
-  }
-  status: 'active' | 'waiting' | 'full'
-  ping: number
-  host: string
-  map: string
+  id: string
+  name: string
+  players: PlayerScore[]
   created: string
 }

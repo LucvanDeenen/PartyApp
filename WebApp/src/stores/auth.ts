@@ -1,18 +1,28 @@
 import { ref, provide, inject, InjectionKey } from 'vue';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import app from '../../firebase.ts';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  signInAnonymously,
+  signOut, 
+  onAuthStateChanged,
+  updateProfile
+} from 'firebase/auth';
+import app from '../../firebase';
 
 interface User {
   id: string;
   name: string | null;
   email: string | null;
+  isGuest: boolean;
 }
 
 interface AuthStore {
   user: ReturnType<typeof ref<User | null>>;
   login: (email: string, password: string) => Promise<void>;
+  loginAsGuest: (guestName: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuthState: () => void;
+  updateProfileName: (name: string) => Promise<void>;
 }
 
 const AuthSymbol: InjectionKey<AuthStore> = Symbol('auth');
@@ -29,9 +39,45 @@ export function createAuth() {
         id: firebaseUser.uid,
         name: firebaseUser.displayName,
         email: firebaseUser.email,
+        isGuest: false
       };
     } catch (error) {
       console.error('Login failed:', error);
+      throw error;
+    }
+  };
+
+  const loginAsGuest = async (guestName: string) => {
+    try {
+      const userCredential = await signInAnonymously(auth);
+      const firebaseUser = userCredential.user;
+      
+      // Set the display name for the anonymous user
+      await updateProfile(firebaseUser, { displayName: guestName });
+      
+      user.value = {
+        id: firebaseUser.uid,
+        name: guestName,
+        email: null,
+        isGuest: true
+      };
+    } catch (error) {
+      console.error('Guest login failed:', error);
+      throw error;
+    }
+  };
+
+  const updateProfileName = async (name: string) => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error('No user logged in');
+      
+      await updateProfile(currentUser, { displayName: name });
+      if (user.value) {
+        user.value.name = name;
+      }
+    } catch (error) {
+      console.error('Failed to update profile:', error);
       throw error;
     }
   };
@@ -53,6 +99,7 @@ export function createAuth() {
           id: firebaseUser.uid,
           name: firebaseUser.displayName,
           email: firebaseUser.email,
+          isGuest: firebaseUser.isAnonymous
         };
       } else {
         user.value = null;
@@ -63,8 +110,10 @@ export function createAuth() {
   const store: AuthStore = {
     user,
     login,
+    loginAsGuest,
     logout,
     checkAuthState,
+    updateProfileName
   };
 
   provide(AuthSymbol, store);
