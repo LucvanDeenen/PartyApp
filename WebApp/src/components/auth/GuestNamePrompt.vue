@@ -25,7 +25,7 @@
 
           <div class="text-caption text-medium-emphasis mt-2">
             Name requirements:
-            <ul class="mt-1">
+            <ul class="mt-1 pl-4">
               <li>3-20 characters long</li>
               <li>Letters, numbers, and spaces only</li>
             </ul>

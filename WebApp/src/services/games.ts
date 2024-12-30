@@ -8,7 +8,7 @@ import {
   Firestore,
 } from 'firebase/firestore';
 import type { Game, PlayerScore } from '../types/game';
-import app from '../../firebase';
+import { app } from '../../firebase';
 
 const db: Firestore = getFirestore(app);
 const gamesCollection = collection(db, 'games');

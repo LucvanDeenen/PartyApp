@@ -47,28 +47,21 @@
 </template>
 
 <script lang="ts">
-import { useAuth } from '../../services/auth'
-
 export default {
   name: 'EditProfileName',
   data() {
-    const { user } = useAuth()
-
     return {
       dialog: false,
-      newName: user?.value?.name || '',
+      newName: '',
       loading: false,
     }
   },
   methods: {
     async handleSubmit() {
       if (!this.newName) return
-
-      const { updateProfileName } = useAuth()
-
       try {
         this.loading = true
-        await updateProfileName(this.newName)
+        // await updateProfileName(this.newName)
         this.dialog = false
       } catch (error) {
         console.error('Failed to update name:', error)

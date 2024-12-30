@@ -17,25 +17,18 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useAuth } from '../../services/auth'
+import { signOutUser } from '../../services/auth'
 
 export default defineComponent({
   name: 'UserMenu',
   data() {
     return {
       user: null as any,
-      signOut: null as (() => Promise<void>) | null,
     }
-  },
-  created() {
-    const { user, logout } = useAuth()
-    this.user = user
-    this.signOut = logout
   },
   methods: {
     async logout() {
-      if (!this.signOut) return
-      await this.signOut()
+      await signOutUser()
       this.$router.push('/login')
     }
   }

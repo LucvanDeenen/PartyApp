@@ -44,7 +44,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuth } from '../services/auth'
+import { signIn, signInAsGuest } from '../services/auth'
 import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
 export default defineComponent({
@@ -64,18 +64,13 @@ export default defineComponent({
   },
   methods: {
     async handleLogin() {
-      const router = useRouter()
-      const route = useRoute()
-      const { login } = useAuth()
-
       try {
         this.loading = true
         this.error = ''
+        await signIn(this.email, this.password)
 
-        await login(this.email, this.password)
-
-        const redirect = (route.query.redirect as string) || '/games'
-        router.push(redirect)
+        const redirect = (this.$route.query.redirect as string) || '/games'
+        this.$router.push(redirect)
       } catch (e) {
         this.error = 'Invalid email or password. Please try again.'
       } finally {
@@ -86,13 +81,12 @@ export default defineComponent({
     async handleGuestLogin(guestName: string) {
       const router = useRouter()
       const route = useRoute()
-      const { loginAsGuest } = useAuth()
 
       try {
         this.loading = true
         this.error = ''
 
-        await loginAsGuest(guestName)
+        await signInAsGuest(guestName)
         this.showGuestPrompt = false
 
         const redirect = (route.query.redirect as string) || '/games'

@@ -38,8 +38,8 @@
 </template>
 
 <script lang="ts">
-import { getAuth, createUserWithEmailAndPassword, updateProfile, UserCredential } from 'firebase/auth'
-import { useAuth } from '../services/auth'
+import { UserCredential } from 'firebase/auth';
+import { signUp } from '../services/auth'
 
 export default {
   name: 'Register',
@@ -55,17 +55,11 @@ export default {
   },
   methods: {
     async handleRegister() {
-      const auth = getAuth()
-      const { checkAuthState } = useAuth()
-
       try {
         this.loading = true
         this.error = ''
 
-        const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, this.email, this.password)
-        await updateProfile(userCredential.user, { displayName: this.name })
-
-        checkAuthState()
+        const UserCredential: UserCredential = await signUp(this.email, this.password)
         this.$router.push('/games')
       } catch (e: any) {
         this.error = e.message || 'Registration failed. Please try again.'

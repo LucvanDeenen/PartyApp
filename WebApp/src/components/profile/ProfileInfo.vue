@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-import { useAuth } from '../../services/auth'
 import ProfileNameEdit from './ProfileNameEdit.vue'
 
 export default {
@@ -44,10 +43,6 @@ export default {
     ProfileNameEdit,
   },
   data() {
-    const { user } = useAuth()
-    return {
-      user,
-    }
   },
   computed: {
     memberSince() {

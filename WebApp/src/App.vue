@@ -9,16 +9,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createAuth } from './services/auth'
 import Navigation from './components/layout/Navigation.vue'
 
 export default defineComponent({
   name: 'AppRoot',
   components: {
     Navigation
-  },
-  created() {
-    createAuth()
   },
   computed: {
     showNavigation(): boolean {
