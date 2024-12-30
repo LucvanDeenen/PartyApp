@@ -4,6 +4,7 @@ package-lock.json
 /dist
 
 firebase-config.ts
+.firebase
 
 # local env files
 .env.local
