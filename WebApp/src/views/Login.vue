@@ -38,13 +38,13 @@
     </v-row>
 
     <guest-name-prompt v-model:show="showGuestPrompt" @submit="handleGuestLogin" />
+
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import { signIn, signInAsGuest } from '../services/auth'
 import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
 export default defineComponent({
@@ -62,18 +62,14 @@ export default defineComponent({
       showGuestPrompt: false
     }
   },
-  created() {
-    console.log(this.currentUser())
-  },
   methods: {
-    ...mapActions('auth', ['setUser']),
     ...mapGetters('auth', ['currentUser']),
+    ...mapActions('auth', ['signIn', 'signInAsGuest']),
     async handleLogin() {
       try {
         this.loading = true
         this.error = ''
-        const userCredential = await signIn(this.email, this.password)
-        await this.setUser(userCredential.user)
+        await this.signIn(this.email, this.password)
 
         const redirect = (this.$route.query.redirect as string) || '/games'
         this.$router.push(redirect)
@@ -89,8 +85,7 @@ export default defineComponent({
         this.loading = true
         this.error = ''
 
-        const user = await signInAsGuest(guestName)
-        await this.setUser(user)
+        await this.signInAsGuest(guestName)
         this.showGuestPrompt = false
 
         const redirect = (this.$route.query.redirect as string) || '/games'
