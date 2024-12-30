@@ -1,11 +1,11 @@
 import { Module } from 'vuex'
 import { auth } from '../../../firebase'
-import { User } from 'firebase/auth'
+import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword, signOut, User } from 'firebase/auth'
 import { RootState, AuthState } from '../types'
 
 const authModule: Module<AuthState, RootState> = {
   namespaced: true,
-  
+
   state: (): AuthState => ({
     user: null,
     loading: true
@@ -29,15 +29,35 @@ const authModule: Module<AuthState, RootState> = {
 
   actions: {
     init({ commit }: any) {
-      auth.onAuthStateChanged((user) => {
-        commit('SET_USER', user)
-        commit('SET_LOADING', false)
-      })
+      setPersistence(auth, browserLocalPersistence)
+        .then(() => {
+          auth.onAuthStateChanged((user) => {
+            commit('SET_USER', user)
+            commit('SET_LOADING', false)
+          })
+        })
+        .catch((error) => {
+          console.error('Error setting persistence:', error);
+        });
     },
-
-    setUser({ commit }: any, user: User | null) {
-      commit('SET_USER', user)
-    }
+    async signIn({ commit }: any, { email, password }: any) {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        commit('SET_USER', user);
+      } catch (error) {
+        console.error('Error signing in:', error);
+      }
+    },
+    signOut({ commit }: any) {
+      signOut(auth)
+        .then(() => {
+          commit('SET_USER', null);
+        })
+        .catch((error) => {
+          console.error('Error signing out:', error);
+        });
+    },
   }
 }
 

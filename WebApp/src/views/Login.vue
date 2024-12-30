@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { mapActions, mapGetters } from 'vuex'
 import { signIn, signInAsGuest } from '../services/auth'
 import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
@@ -62,12 +62,18 @@ export default defineComponent({
       showGuestPrompt: false
     }
   },
+  created() {
+    console.log(this.currentUser())
+  },
   methods: {
+    ...mapActions('auth', ['setUser']),
+    ...mapGetters('auth', ['currentUser']),
     async handleLogin() {
       try {
         this.loading = true
         this.error = ''
-        await signIn(this.email, this.password)
+        const userCredential = await signIn(this.email, this.password)
+        await this.setUser(userCredential.user)
 
         const redirect = (this.$route.query.redirect as string) || '/games'
         this.$router.push(redirect)
@@ -79,18 +85,16 @@ export default defineComponent({
     },
 
     async handleGuestLogin(guestName: string) {
-      const router = useRouter()
-      const route = useRoute()
-
       try {
         this.loading = true
         this.error = ''
 
-        await signInAsGuest(guestName)
+        const user = await signInAsGuest(guestName)
+        await this.setUser(user)
         this.showGuestPrompt = false
 
-        const redirect = (route.query.redirect as string) || '/games'
-        router.push(redirect)
+        const redirect = (this.$route.query.redirect as string) || '/games'
+        this.$router.push(redirect)
       } catch (e) {
         this.error = 'Guest login failed. Please try again.'
       } finally {
