@@ -3,7 +3,7 @@ node_modules
 package-lock.json
 /dist
 
-firebase-config.ts
+firebase.ts
 .firebase
 
 # local env files

@@ -33,9 +33,15 @@
               size="large"
               type="submit"
               class="mt-4"
+              :loading="loading"
+              :disabled="loading"
             >
               Login
             </v-btn>
+
+            <div v-if="error" class="text-danger text-center mt-2">
+              {{ error }}
+            </div>
 
             <div class="text-center mt-4">
               Don't have an account?
@@ -55,12 +61,23 @@ import { useAuth } from '../stores/auth'
 
 const router = useRouter()
 const { login } = useAuth()
+
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
+const loading = ref(false)
+const error = ref('')
 
 const handleLogin = async () => {
-  await login(email.value, password.value)
-  router.push('/games')
+  try {
+    loading.value = true
+    error.value = ''
+    await login(email.value, password.value)
+    router.push('/games')
+  } catch (e) {
+    error.value = 'Invalid email or password. Please try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>

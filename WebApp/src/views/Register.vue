@@ -41,9 +41,15 @@
               size="large"
               type="submit"
               class="mt-4"
+              :loading="loading"
+              :disabled="loading"
             >
               Register
             </v-btn>
+
+            <div v-if="error" class="text-danger text-center mt-2">
+              {{ error }}
+            </div>
 
             <div class="text-center mt-4">
               Already have an account?
@@ -58,18 +64,33 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../stores/auth'
+import { getAuth, createUserWithEmailAndPassword, updateProfile, UserCredential } from 'firebase/auth'
+
+const router = useRouter()
+const auth = getAuth()
+const { checkAuthState } = useAuth()
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
+const loading = ref(false)
+const error = ref('')
 
-const handleRegister = () => {
-  // Implement registration logic here
-  console.log('Register attempt:', {
-    name: name.value,
-    email: email.value,
-    password: password.value
-  })
+const handleRegister = async () => {
+  try {
+    loading.value = true
+    error.value = ''
+    const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email.value, password.value)
+    await updateProfile(userCredential.user, { displayName: name.value })
+    checkAuthState()
+    router.push('/games')
+  } catch (e: any) {
+    error.value = e.message || 'Registration failed. Please try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
