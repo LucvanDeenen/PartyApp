@@ -1,9 +1,9 @@
-name: Deploy to Firebase on Push to Dev
+name: Deploy to Firebase on Push to main
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build:
