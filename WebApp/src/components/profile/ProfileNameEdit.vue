@@ -30,11 +30,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="grey-darken-1"
-          variant="text"
-          @click="dialog = false"
-        >
+        <v-btn color="grey-darken-1" variant="text" @click="dialog = false">
           Cancel
         </v-btn>
         <v-btn
@@ -50,26 +46,36 @@
   </v-dialog>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useAuth } from '../../stores/auth'
+<script lang="ts">
+import { useAuth } from '../../services/auth'
 
-const { user, updateProfileName } = useAuth()
-const dialog = ref(false)
-const newName = ref(user.value?.name || '')
-const loading = ref(false)
+export default {
+  name: 'EditProfileName',
+  data() {
+    const { user } = useAuth()
 
-const handleSubmit = async () => {
-  if (!newName.value) return
-  
-  try {
-    loading.value = true
-    await updateProfileName(newName.value)
-    dialog.value = false
-  } catch (error) {
-    console.error('Failed to update name:', error)
-  } finally {
-    loading.value = false
-  }
+    return {
+      dialog: false,
+      newName: user?.value?.name || '',
+      loading: false,
+    }
+  },
+  methods: {
+    async handleSubmit() {
+      if (!this.newName) return
+
+      const { updateProfileName } = useAuth()
+
+      try {
+        this.loading = true
+        await updateProfileName(this.newName)
+        this.dialog = false
+      } catch (error) {
+        console.error('Failed to update name:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+  },
 }
 </script>

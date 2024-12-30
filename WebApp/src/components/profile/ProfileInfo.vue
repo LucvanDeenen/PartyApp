@@ -34,11 +34,25 @@
   </v-card>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useAuth } from '../../stores/auth'
+<script lang="ts">
+import { useAuth } from '../../services/auth'
 import ProfileNameEdit from './ProfileNameEdit.vue'
 
-const { user } = useAuth()
-const memberSince = computed(() => new Date().toLocaleDateString())
+export default {
+  name: 'PersonalInformation',
+  components: {
+    ProfileNameEdit,
+  },
+  data() {
+    const { user } = useAuth()
+    return {
+      user,
+    }
+  },
+  computed: {
+    memberSince() {
+      return new Date().toLocaleDateString()
+    },
+  },
+}
 </script>

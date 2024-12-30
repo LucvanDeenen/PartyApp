@@ -1,5 +1,10 @@
 <template>
-  <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" persistent max-width="400">
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="400"
+  >
     <v-card>
       <v-card-title class="text-h6 pa-4">
         Choose Your Guest Name
@@ -23,7 +28,6 @@
             <ul class="mt-1">
               <li>3-20 characters long</li>
               <li>Letters, numbers, and spaces only</li>
-              <li>Must be family-friendly</li>
             </ul>
           </div>
         </v-form>
@@ -51,43 +55,55 @@
   </v-dialog>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-const props = defineProps<{
-  show: boolean
-}>()
+export default defineComponent({
+  name: 'GuestNameDialog',
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    }
+  },
+  emits: ['submit', 'update:show'],
 
-const emit = defineEmits<{
-  (e: 'submit', name: string): void
-  (e: 'update:show', value: boolean): void
-}>()
+  data() {
+    return {
+      guestName: '',
+      loading: false,
+      errorMessage: '',
+      nameRules: [
+        (v: string) => !!v || 'Name is required',
+        (v: string) => v.length >= 3 || 'Name must be at least 3 characters',
+        (v: string) => v.length <= 20 || 'Name must be less than 20 characters',
+        (v: string) =>
+          /^[a-zA-Z0-9 ]*$/.test(v) || 'Only letters, numbers, and spaces allowed'
+      ]
+    }
+  },
 
-const guestName = ref('')
-const loading = ref(false)
-const errorMessage = ref('')
+  computed: {
+    isValidName(): boolean {
+      return (
+        this.guestName.length >= 3 &&
+        this.guestName.length <= 20 &&
+        /^[a-zA-Z0-9 ]*$/.test(this.guestName)
+      )
+    }
+  },
 
-const nameRules = [
-  (v: string) => !!v || 'Name is required',
-  (v: string) => v.length >= 3 || 'Name must be at least 3 characters',
-  (v: string) => v.length <= 20 || 'Name must be less than 20 characters',
-  (v: string) => /^[a-zA-Z0-9 ]*$/.test(v) || 'Only letters, numbers, and spaces allowed'
-]
+  methods: {
+    async handleSubmit() {
+      if (!this.isValidName) return
 
-const isValidName = computed(() => {
-  return guestName.value.length >= 3 && 
-         guestName.value.length <= 20 && 
-         /^[a-zA-Z0-9 ]*$/.test(guestName.value)
-})
-
-const handleSubmit = async () => {
-  if (!isValidName.value) return
-  
-  try {
-    loading.value = true
-    emit('submit', guestName.value.trim())
-  } finally {
-    loading.value = false
+      try {
+        this.loading = true
+        this.$emit('submit', this.guestName.trim())
+      } finally {
+        this.loading = false
+      }
+    }
   }
-}
+})
 </script>

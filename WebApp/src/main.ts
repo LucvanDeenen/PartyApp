@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createAuth } from './stores/auth';
+import { createAuth } from './services/auth';
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'

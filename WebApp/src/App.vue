@@ -2,23 +2,48 @@
   <v-app>
     <navigation v-if="showNavigation" />
     <v-main>
-      <router-view></router-view>
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { createAuth } from './services/auth'
 import Navigation from './components/layout/Navigation.vue'
-import { createAuth } from './stores/auth'
 
-// Initialize auth store at the root level
-createAuth()
-
-const route = useRoute()
-
-const showNavigation = computed(() => {
-  return !['login', 'register'].includes(route.name as string)
+export default defineComponent({
+  name: 'AppRoot',
+  components: {
+    Navigation
+  },
+  created() {
+    createAuth()
+  },
+  computed: {
+    showNavigation(): boolean {
+      return !['login', 'register'].includes(this.$route.name as string)
+    }
+  }
 })
 </script>
+
+<style lang="css">
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(25, 118, 210);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(0, 255, 255);
+}
+</style>

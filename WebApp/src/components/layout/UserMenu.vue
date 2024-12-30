@@ -7,28 +7,37 @@
       <v-list-item-subtitle class="text-caption">
         {{ user.email }}
       </v-list-item-subtitle>
-      
-      <template v-slot:append>
-        <v-btn
-          variant="text"
-          icon="mdi-logout"
-          size="small"
-          @click="logout"
-        ></v-btn>
+
+      <template #append>
+        <v-btn variant="text" icon="mdi-logout" size="small" @click="logout"></v-btn>
       </template>
     </v-list-item>
   </v-list>
 </template>
 
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useAuth } from '../../stores/auth'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { useAuth } from '../../services/auth'
 
-const router = useRouter()
-const { user, logout: signOut } = useAuth()
-
-const logout = async () => {
-  await signOut()
-  router.push('/login')
-}
+export default defineComponent({
+  name: 'UserMenu',
+  data() {
+    return {
+      user: null as any,
+      signOut: null as (() => Promise<void>) | null,
+    }
+  },
+  created() {
+    const { user, logout } = useAuth()
+    this.user = user
+    this.signOut = logout
+  },
+  methods: {
+    async logout() {
+      if (!this.signOut) return
+      await this.signOut()
+      this.$router.push('/login')
+    }
+  }
+})
 </script>

@@ -12,7 +12,16 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import ProfileInfo from '../components/profile/ProfileInfo.vue'
 import ProfileSettings from '../components/profile/ProfileSettings.vue'
+
+export default defineComponent({
+  name: "profile",
+  component: {
+    ProfileSettings,
+    ProfileInfo
+  }
+})
 </script>

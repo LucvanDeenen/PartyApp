@@ -16,6 +16,7 @@
         </v-btn>
       </div>
 
+      <!-- GameSearch emits the 'search' event with the user’s query -->
       <game-search @search="handleSearch" />
 
       <div v-if="loading" class="d-flex justify-center pa-4">
@@ -26,8 +27,10 @@
         {{ error }}
       </div>
 
+      <!-- Render the filtered games if not loading and no error -->
       <template v-else>
         <game-row
+          class="ma-5"
           v-for="game in games"
           :key="game.id"
           :game="game"
@@ -38,52 +41,63 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import GameRow from '../components/GameRow.vue'
-import GameSearch from '../components/GameSearch.vue'
-import { useGames } from '../stores/games'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import GameRow from '../components/game/GameRow.vue'
+import GameSearch from '../components/game/GameSearch.vue'
+import { getGames } from '../services/games'
 import type { Game } from '../types/game'
 
-// Local state in this component
-const games = ref<Game[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
+export default defineComponent({
+  name: 'GamesList',
+  components: {
+    GameRow,
+    GameSearch,
+  },
+  data() {
+    return {
+      allGames: [] as Game[],
+      games: [] as Game[],
+      loading: true,
+      error: null as string | null,
+    }
+  },
+  async created() {
+    try {
+      const fetchedGames = await getGames()
+      this.allGames = fetchedGames
+      this.games = fetchedGames
+    } catch (err) {
+      this.error = (err as Error).message
+    } finally {
+      this.loading = false
+    }
+  },
+  methods: {
+    navigateToGame(game: Game) {
+      this.$router.push(`/games/${game.id}`)
+    },
+    createNewGame() {
+      console.log('Creating new game')
+    },
+    handleSearch(query: string) {
+      if (!query.trim()) {
+        this.games = this.allGames
+        return
+      }
 
-// Pull getGames from the minimal composable/store
-const { getGames } = useGames()
-
-onMounted(async () => {
-  try {
-    loading.value = true
-    games.value = await getGames()
-  } catch (err) {
-    error.value = (err as Error).message
-  } finally {
-    loading.value = false
-  }
+      const lowercaseQuery = query.toLowerCase()
+      this.games = this.allGames.filter(game =>
+        game.name.toLowerCase().includes(lowercaseQuery)
+      )
+    },
+  },
 })
-
-const router = useRouter()
-const navigateToGame = (game: Game) => {
-  router.push(`/games/${game.id}`)
-}
-
-// Placeholder for creation logic
-const createNewGame = () => {
-  console.log('Creating new game')
-}
-
-// Placeholder for search logic
-const handleSearch = (query: string) => {
-  console.log('Searching for:', query)
-}
 </script>
 
 <style scoped>
 .games-container {
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background-color: #f8f9fa;
@@ -92,21 +106,5 @@ const handleSearch = (query: string) => {
 .games-list {
   flex: 1;
   overflow-y: auto;
-}
-
-/* Custom Scrollbar Styling */
-.games-list::-webkit-scrollbar {
-  width: 8px;
-}
-.games-list::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
-.games-list::-webkit-scrollbar-thumb {
-  background: rgb(25, 118, 210);
-  border-radius: 4px;
-}
-.games-list::-webkit-scrollbar-thumb:hover {
-  background: rgb(0, 255, 255);
 }
 </style>

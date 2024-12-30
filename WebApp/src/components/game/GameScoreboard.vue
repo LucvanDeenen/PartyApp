@@ -1,79 +1,68 @@
 <template>
-  <v-card class="scoreboard">
+  <v-card>
     <v-card-title class="text-center text-h5 py-4">
       {{ title }}
     </v-card-title>
-    
+
     <v-divider></v-divider>
-    
+
     <v-list>
-      <v-list-item
-        v-for="player in sortedPlayers"
-        :key="player.id"
-        :class="{ 'first-place': player.points === highestScore }"
-      >
-        <template v-slot:prepend>
-          <v-avatar
-            :color="player.points === highestScore ? 'warning' : 'primary'"
-            :image="player.avatar"
-            class="position-relative"
-          >
-            {{ getInitials(player.name) }}
-          </v-avatar>
-        </template>
-        
+      <v-list-item v-for="playerDetails in sortedPlayers" :key="playerDetails.player.id"
+        :class="{ 'first-place': playerDetails.score === highestScore }">
         <v-list-item-title>
-            {{ player.name }}
-            <v-icon
-              v-if="player.points === highestScore"
-              color="warning"
-              class="mb-1"
-              icon="mdi-crown"
-            ></v-icon>
+          <v-icon v-if="playerDetails.score === highestScore" color="accent" class="mb-1" icon="mdi-crown"></v-icon>
+          {{ playerDetails.player.name }}
         </v-list-item-title>
-        
+
         <template v-slot:append>
           <div class="d-flex align-center">
-            <v-icon
-              color="amber"
-              size="small"
-              class="mr-1"
-            >
+            <v-icon color="accent" size="small" class="mr-1">
               mdi-star
             </v-icon>
-            <span class="text-h6">{{ player.points }}</span>
+            <span class="text-h6">{{ playerDetails.score }}</span>
           </div>
         </template>
       </v-list-item>
     </v-list>
   </v-card>
 </template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import type { PlayerScore } from '../../types/game'
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import type { Player } from '../../types/game'
+export default defineComponent({
+  name: 'GameScoreboard',
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    players: {
+      type: Array as () => PlayerScore[],
+      required: true
+    }
+  },
+  computed: {
+    sortedPlayers(): PlayerScore[] {
+      return [...this.players].sort((a, b) => b.score - a.score)
+    },
 
-const props = defineProps<{
-  title: string
-  players: Player[]
-}>()
-
-const sortedPlayers = computed(() => {
-  return [...props.players].sort((a, b) => b.points - a.points)
+    highestScore(): number {
+      return Math.max(...this.players.map(p => p.score))
+    }
+  },
+  methods: {
+    getInitials(name: string): string {
+      return name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+    }
+  }
 })
-
-const highestScore = computed(() => {
-  return Math.max(...props.players.map(p => p.points))
-})
-
-const getInitials = (name: string) => {
-  return name
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-}
 </script>
+
 
 <style scoped>
 .first-place {

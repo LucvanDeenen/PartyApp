@@ -7,17 +7,11 @@
 
       <v-divider></v-divider>
 
-      <v-list-item
-        to="/games"
-        prepend-icon="mdi-gamepad-variant"
-      >
+      <v-list-item to="/games" prepend-icon="mdi-gamepad-variant">
         Games
       </v-list-item>
 
-      <v-list-item
-        to="/profile"
-        prepend-icon="mdi-account"
-      >
+      <v-list-item to="/profile" prepend-icon="mdi-account">
         Profile
       </v-list-item>
     </v-list>
@@ -26,9 +20,18 @@
       <v-divider></v-divider>
       <user-menu />
     </template>
+
   </v-navigation-drawer>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue'
 import UserMenu from './UserMenu.vue'
+
+export default defineComponent({
+  name: 'Navigation',
+  components: {
+    UserMenu
+  }
+})
 </script>

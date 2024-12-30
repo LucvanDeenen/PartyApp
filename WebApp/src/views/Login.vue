@@ -7,47 +7,20 @@
             Login
           </v-card-title>
           <v-form @submit.prevent="handleLogin">
-            <v-text-field
-              v-model="email"
-              label="Email"
-              type="email"
-              required
-              variant="outlined"
-              prepend-inner-icon="mdi-email"
-            ></v-text-field>
+            <v-text-field v-model="email" label="Email" type="email" required variant="outlined"
+              prepend-inner-icon="mdi-email"></v-text-field>
 
-            <v-text-field
-              v-model="password"
-              label="Password"
-              :type="showPassword ? 'text' : 'password'"
-              required
-              variant="outlined"
-              prepend-inner-icon="mdi-lock"
+            <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" required
+              variant="outlined" prepend-inner-icon="mdi-lock"
               :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              @click:append-inner="showPassword = !showPassword"
-            ></v-text-field>
+              @click:append-inner="showPassword = !showPassword"></v-text-field>
 
-            <v-btn
-              block
-              color="primary"
-              size="large"
-              type="submit"
-              class="mt-4"
-              :loading="loading"
-              :disabled="loading"
-            >
+            <v-btn block color="primary" size="large" type="submit" class="mt-4" :loading="loading" :disabled="loading">
               Login
             </v-btn>
 
-            <v-btn
-              block
-              variant="tonal"
-              size="large"
-              class="mt-2"
-              :loading="loading"
-              :disabled="loading"
-              @click="showGuestPrompt = true"
-            >
+            <v-btn block variant="tonal" size="large" class="mt-2" :loading="loading" :disabled="loading"
+              @click="showGuestPrompt = true">
               Continue as Guest
             </v-btn>
 
@@ -64,60 +37,72 @@
       </v-col>
     </v-row>
 
-    <guest-name-prompt
-      v-model:show="showGuestPrompt"
-      @submit="handleGuestLogin"
-    />
+    <guest-name-prompt v-model:show="showGuestPrompt" @submit="handleGuestLogin" />
   </v-container>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuth } from '../stores/auth'
+import { useAuth } from '../services/auth'
 import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
-const router = useRouter()
-const route = useRoute()
-const { login, loginAsGuest } = useAuth()
+export default defineComponent({
+  name: 'LoginView',
+  components: {
+    GuestNamePrompt
+  },
+  data() {
+    return {
+      email: '',
+      password: '',
+      showPassword: false,
+      loading: false,
+      error: '',
+      showGuestPrompt: false
+    }
+  },
+  methods: {
+    async handleLogin() {
+      const router = useRouter()
+      const route = useRoute()
+      const { login } = useAuth()
 
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-const loading = ref(false)
-const error = ref('')
-const showGuestPrompt = ref(false)
+      try {
+        this.loading = true
+        this.error = ''
 
-const handleLogin = async () => {
-  try {
-    loading.value = true
-    error.value = ''
-    await login(email.value, password.value)
-    
-    // Redirect to the intended destination or default to /games
-    const redirect = route.query.redirect as string || '/games'
-    router.push(redirect)
-  } catch (e) {
-    error.value = 'Invalid email or password. Please try again.'
-  } finally {
-    loading.value = false
+        await login(this.email, this.password)
+
+        const redirect = (route.query.redirect as string) || '/games'
+        router.push(redirect)
+      } catch (e) {
+        this.error = 'Invalid email or password. Please try again.'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async handleGuestLogin(guestName: string) {
+      const router = useRouter()
+      const route = useRoute()
+      const { loginAsGuest } = useAuth()
+
+      try {
+        this.loading = true
+        this.error = ''
+
+        await loginAsGuest(guestName)
+        this.showGuestPrompt = false
+
+        const redirect = (route.query.redirect as string) || '/games'
+        router.push(redirect)
+      } catch (e) {
+        this.error = 'Guest login failed. Please try again.'
+      } finally {
+        this.loading = false
+      }
+    }
   }
-}
-
-const handleGuestLogin = async (guestName: string) => {
-  try {
-    loading.value = true
-    error.value = ''
-    await loginAsGuest(guestName)
-    showGuestPrompt.value = false
-    
-    // Redirect to the intended destination or default to /games
-    const redirect = route.query.redirect as string || '/games'
-    router.push(redirect)
-  } catch (e) {
-    error.value = 'Guest login failed. Please try again.'
-  } finally {
-    loading.value = false
-  }
-}
+})
 </script>
