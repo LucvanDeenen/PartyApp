@@ -1,11 +1,11 @@
 <template>
-  <v-list v-if="user">
+  <v-list v-if="currentUser">
     <v-list-item>
       <v-list-item-title class="text-body-2">
-        {{ user.name }}
+        {{ userName }}
       </v-list-item-title>
       <v-list-item-subtitle class="text-caption">
-        {{ user.email }}
+        {{ currentUser.email }}
       </v-list-item-subtitle>
 
       <template #append>
@@ -17,14 +17,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapGetters } from 'vuex'
 import { signOutUser } from '../../services/auth'
 
 export default defineComponent({
   name: 'UserMenu',
-  data() {
-    return {
-      user: null as any,
-    }
+  computed: {
+    ...mapGetters('auth', ['currentUser', 'userName'])
   },
   methods: {
     async logout() {

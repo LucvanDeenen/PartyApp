@@ -13,5 +13,13 @@ export default createVuetify({
     themes: {
       partyTheme
     }
+  },
+  defaults: {
+    VCard: {
+      elevation: 1
+    },
+    VBtn: {
+      elevation: 2
+    }
   }
 })
