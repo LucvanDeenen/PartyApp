@@ -5,7 +5,9 @@
         <v-row align="center" no-gutters>
           <v-col>
             <div class="d-flex align-center">
-              <v-btn icon="mdi-arrow-left" variant="text" @click="goBackToGames" class="mr-3" />
+              <v-icon variant="plain" color="primary" size="small" @click="goBackToGames" class="mr-3">
+                mdi-arrow-left
+              </v-icon>
               <h2 class="text-h5 font-weight-bold mb-0">{{ game?.name || 'Game Details' }}</h2>
             </div>
           </v-col>
@@ -27,7 +29,7 @@
 
       <!-- Error state -->
       <div v-else-if="error" class="d-flex justify-center align-center h-100">
-        <v-alert type="error" text>{{ error }}</v-alert>
+        <v-alert type="error">{{ error }}</v-alert>
       </div>
 
       <!-- Game content -->

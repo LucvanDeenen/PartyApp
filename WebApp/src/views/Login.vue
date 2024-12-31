@@ -15,17 +15,16 @@
               :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append-inner="showPassword = !showPassword"></v-text-field>
 
-            <v-btn block color="primary" size="large" type="submit" class="mt-4" :loading="loading" :disabled="loading">
+            <v-btn block color="primary" size="large" type="submit" class="mt-4" :disabled="loading">
               Login
             </v-btn>
 
-            <v-btn block variant="tonal" size="large" class="mt-2" :loading="loading" :disabled="loading"
-              @click="showGuestPrompt = true">
+            <v-btn block variant="tonal" size="large" class="mt-2" :disabled="loading" @click="showGuestPrompt = true">
               Continue as Guest
             </v-btn>
 
             <div v-if="error" class="text-error text-center mt-2">
-              {{ error }}
+              <v-snackbar v-model="popup" :timeout="timeout">{{ error }}</v-snackbar>
             </div>
 
             <div class="text-center mt-4">
@@ -57,6 +56,8 @@ export default defineComponent({
       password: '',
       showPassword: false,
       loading: false,
+      popup: false,
+      timeout: 4000,
       error: '',
       showGuestPrompt: false
     }
@@ -83,6 +84,7 @@ export default defineComponent({
         this.error = ''
         await this.signIn({ email: this.email, password: this.password })
       } catch (e) {
+        this.popup = true;
         this.error = 'Invalid email or password. Please try again.'
       } finally {
         this.loading = false
@@ -96,6 +98,7 @@ export default defineComponent({
         await this.signInAsGuest(guestName)
         this.showGuestPrompt = false
       } catch (e) {
+        this.popup = true;
         this.error = 'Guest login failed. Please try again.'
       } finally {
         this.loading = false

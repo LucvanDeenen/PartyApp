@@ -54,6 +54,7 @@ const authModule: Module<AuthState, RootState> = {
         })
         .catch((error) => {
           console.error('Error setting persistence:', error)
+          throw error;
         })
     },
 
@@ -64,6 +65,7 @@ const authModule: Module<AuthState, RootState> = {
         commit('SET_USER', user)
       } catch (error) {
         console.error('Error signing in:', error)
+        throw error;
       }
     },
 
@@ -98,6 +100,7 @@ const authModule: Module<AuthState, RootState> = {
         commit('SET_USER', null)
       } catch (error) {
         console.error('Error signing out:', error)
+        throw error;
       }
     },
   },

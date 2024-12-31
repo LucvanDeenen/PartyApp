@@ -1,84 +1,56 @@
 <template>
-  <v-card
-    :class="[
-      'player-tile',
-      { 'is-leader': isLeader }
-    ]"
-    :elevation="isLeader ? 4 : 1"
-  >
+  <v-card :class="[
+    'player-tile',
+    { 'is-leader': isLeader }
+  ]" :elevation="isLeader ? 4 : 1">
     <v-card-text class="pa-4">
       <!-- Header with avatar and name -->
       <div class="d-flex align-center mb-2">
-        <v-avatar
-          :color="isLeader ? 'accent' : 'primary'"
-          size="32"
-          class="white--text text-subtitle-2 mr-2"
-        >
+        <v-avatar :color="isLeader ? 'accent' : 'primary'" size="32" class="white--text text-subtitle-2 mr-2">
           {{ getInitials(playerDetails.player.name) }}
         </v-avatar>
         <span class="text-h6">{{ playerDetails.player.name }}</span>
-        <v-icon
-          v-if="isLeader"
-          color="accent"
-          icon="mdi-crown"
-          class="ml-2"
-          size="small"
-        />
+        <v-icon v-if="isLeader" color="accent" icon="mdi-crown" class="ml-2" size="small" />
+        <v-spacer />
+        <div>
+          <v-btn variant="plain" icon="mdi-pencil" density="comfortable" size="small" class="control-btn"
+            @click="modifyScore">
+          </v-btn>
+        </div>
       </div>
 
       <!-- Score display -->
-      <div class="text-subtitle-1 text-medium-emphasis mb-4">
-        Score: {{ playerDetails.score }}
-        <span v-if="totalPotentialScore > 0" class="text-primary">
-          (+{{ totalPotentialScore }})
-        </span>
+      <div class="mb-4 d-flex">
+        <div class="text-subtitle-1 text-medium-emphasis">
+          <v-icon>mdi-star</v-icon><span class="ml-1 text-overline">{{ playerDetails.score }}</span>
+          <span v-if="totalPotentialScore > 0" class="text-overline">
+            (+{{ totalPotentialScore }})
+          </span>
+        </div>
+
+        <v-spacer></v-spacer>
+
+        <!-- Confirm/Cancel buttons -->
+        <div class="control-buttons" v-if="tempScore > 0">
+          <v-btn color="success" variant="tonal" icon="mdi-check" density="comfortable" size="small" class="control-btn"
+            style="margin-right: 5px !important;" @click="confirmScore">
+          </v-btn>
+          <v-btn color="error" variant="tonal" icon="mdi-close" density="comfortable" size="small" class="control-btn"
+            @click="cancelScore">
+          </v-btn>
+        </div>
       </div>
 
       <!-- Action buttons container -->
       <div class="action-buttons mb-2">
         <!-- Score buttons -->
         <div class="score-buttons">
-          <v-btn
-            v-for="points in [1, 2, 3, 4]"
-            :key="points"
-            color="primary"
-            variant="tonal"
-            density="comfortable"
-            size="small"
-            class="score-btn"
-            :ripple="false"
-            @click="addToTempScore(points)"
-          >
+          <v-btn v-for="points in [1, 2, 3, 4]" :key="points" color="primary" variant="tonal" density="comfortable"
+            size="small" class="score-btn" :ripple="false" @click="addToTempScore(points)">
             +{{ points }}
             <span v-if="buttonCounts[points] > 0" class="counter-badge">
               ({{ buttonCounts[points] }})
             </span>
-          </v-btn>
-        </div>
-
-        <!-- Confirm/Cancel buttons -->
-        <div class="control-buttons" v-if="tempScore > 0">
-          <v-btn
-            color="success"
-            variant="tonal"
-            density="comfortable"
-            size="small"
-            class="control-btn"
-            prepend-icon="mdi-check"
-            @click="confirmScore"
-          >
-            Confirm
-          </v-btn>
-          <v-btn
-            color="error"
-            variant="tonal"
-            density="comfortable"
-            size="small"
-            class="control-btn"
-            prepend-icon="mdi-close"
-            @click="cancelScore"
-          >
-            Cancel
           </v-btn>
         </div>
       </div>
@@ -136,6 +108,9 @@ export default defineComponent({
         .map(n => n[0])
         .join('')
         .toUpperCase()
+    },
+    modifyScore() {
+
     },
     addToTempScore(points: number) {
       this.tempScore += points
@@ -196,16 +171,10 @@ export default defineComponent({
   width: 100%;
 }
 
-.control-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-}
-
 .score-btn {
   transition: all 0.2s ease;
   width: 100%;
+  height: 50px !important;
   position: relative;
 }
 
@@ -217,7 +186,7 @@ export default defineComponent({
 
 .control-btn {
   transition: all 0.2s ease;
-  width: 100%;
+  width: 50px;
 }
 
 .control-btn:hover {

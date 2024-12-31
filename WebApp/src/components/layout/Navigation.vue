@@ -23,11 +23,7 @@
   </v-navigation-drawer>
 
   <!-- Mobile Menu Button -->
-  <v-btn
-    icon
-    class="menu-btn"
-    @click="drawer = !drawer"
-  >
+  <v-btn icon class="menu-btn" @click="drawer = !drawer">
     <v-icon>mdi-menu</v-icon>
   </v-btn>
 </template>
