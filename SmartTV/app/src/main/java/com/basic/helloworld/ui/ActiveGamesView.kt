@@ -22,8 +22,8 @@ import com.basic.helloworld.viewmodel.PlayerViewModel
 @Composable
 fun ActiveGamesView(
     onGameSelected: (Game) -> Unit,
-    gameViewModel: GameViewModel = GameViewModel(),
-    playerViewModel: PlayerViewModel = PlayerViewModel()
+    gameViewModel: GameViewModel = remember { GameViewModel() },
+    playerViewModel: PlayerViewModel = remember { PlayerViewModel() }
 ) {
     val games by gameViewModel.games.collectAsState(initial = emptyList())
     val isLoading by gameViewModel.isLoading.collectAsState()
