@@ -13,7 +13,7 @@
             label="Game Name"
             variant="outlined"
             density="comfortable"
-            :rules="[v => !!v || 'Game name is required']"
+            :rules="[(v: string) => !!v || 'Game name is required']"
             class="mb-4"
           ></v-text-field>
 
