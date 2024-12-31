@@ -75,7 +75,7 @@ const actions: ActionTree<AuthState, RootState> = {
       await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
   
-      await dispatch('players/addPlayer', { id: user.uid, name }, { root: true });
+      await dispatch('players/addPlayer', { id: user.uid, name: name }, { root: true });
     } catch (error) {
       console.error('Error signing up:', error);
       throw error;

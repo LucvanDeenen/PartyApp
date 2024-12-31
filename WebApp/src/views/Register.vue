@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('auth', ['singUp']),
+    ...mapActions('auth', ['signUp']),
     async handleRegister() {
       try {
         this.loading = true
