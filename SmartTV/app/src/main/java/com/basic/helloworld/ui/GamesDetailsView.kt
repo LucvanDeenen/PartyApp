@@ -101,7 +101,7 @@ fun PlayerCard(playerName: String, score: Int) {
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = "Points Icon",
-                    tint = Color.Yellow,
+                    tint = Color.Gray,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))

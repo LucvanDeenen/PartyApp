@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.basic.helloworld.ui.GameDetailsView
 import com.basic.helloworld.ui.ActiveGamesView
+import com.basic.helloworld.ui.HomeScreen
 import com.basic.helloworld.ui.theme.PartyApp
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +27,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "active_games") {
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(onNavigateToActiveGames = {
+                navController.navigate("active_games")
+            })
+        }
         composable("active_games") {
             ActiveGamesView(
                 onGameSelected = { game ->
