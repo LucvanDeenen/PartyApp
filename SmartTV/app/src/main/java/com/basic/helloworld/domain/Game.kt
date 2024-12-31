@@ -1,7 +1,7 @@
 package com.basic.helloworld.domain
 
 data class Game(
-    val id: String = "",
+    var id: String = "",
     val createdBy: String = "",
     val name: String = "",
     val round: Int = 0,
