@@ -1,7 +1,6 @@
 package com.basic.helloworld.repository
 
 import com.basic.helloworld.domain.Game
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -48,18 +47,24 @@ class GameRepository : Repository() {
     // Subscribe to real-time updates for a specific game
     fun subscribeToGame(gameId: String): Flow<Game?> {
         return callbackFlow {
-            val listenerRegistration: ListenerRegistration = gamesCollection.document(gameId)
+            val listenerRegistration = gamesCollection.document(gameId)
                 .addSnapshotListener { snapshot, exception ->
                     if (exception != null) {
-                        close(exception)
+                        close(exception) // Close the flow if there's an error
                         return@addSnapshotListener
                     }
-                    val game = snapshot?.toObject<Game>()?.apply {
-                        id = snapshot.id
+
+                    if (snapshot != null && snapshot.exists()) {
+                        val game = snapshot.toObject<Game>()?.apply {
+                            id = snapshot.id
+                        }
+                        trySend(game)
+                    } else {
+                        trySend(null)
                     }
-                    trySend(game)
                 }
 
+            println("Closing...")
             awaitClose { listenerRegistration.remove() }
         }
     }

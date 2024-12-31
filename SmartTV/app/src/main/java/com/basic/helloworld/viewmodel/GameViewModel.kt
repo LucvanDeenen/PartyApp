@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.basic.helloworld.domain.Game
 import com.basic.helloworld.repository.GameRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,10 +16,12 @@ class GameViewModel : ViewModel() {
     val games: StateFlow<List<Game>> get() = _games
 
     private val _selectedGame = MutableStateFlow<Game?>(null)
-    val game: StateFlow<Game?> get() = _selectedGame
+    val game: MutableStateFlow<Game?> get() = _selectedGame
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
+
+    private var gameSubscriptionJob: Job? = null
 
     fun loadGames() {
         viewModelScope.launch {
@@ -43,5 +46,22 @@ class GameViewModel : ViewModel() {
             _selectedGame.value = game
             _isLoading.value = false
         }
+    }
+
+    fun subscribeToGame(gameId: String) {
+        viewModelScope.launch {
+            repository.subscribeToGame(gameId).collect { updatedGame ->
+                if (updatedGame != null) {
+                    _selectedGame.value = updatedGame
+                } else {
+                    println("Game document no longer exists.")
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        gameSubscriptionJob?.cancel()
     }
 }

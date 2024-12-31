@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.basic.helloworld.viewmodel.GameViewModel
 
 @Composable
-fun GameDetailsView(gameId: String, viewModel: GameViewModel = GameViewModel()) {
-    val game by viewModel.game.collectAsState(initial = null)
+fun GameDetailsView(gameId: String, viewModel: GameViewModel = remember { GameViewModel() }) {
+    val game by viewModel.game.collectAsState()
 
     LaunchedEffect(gameId) {
-        viewModel.loadGameById(gameId)
+        viewModel.subscribeToGame(gameId)
     }
 
     Column(
@@ -31,17 +32,6 @@ fun GameDetailsView(gameId: String, viewModel: GameViewModel = GameViewModel()) 
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Game Title
-        Text(
-            text = game?.name?.uppercase() ?: "Loading in $gameId...",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
         if (game == null) {
             Box(
                 modifier = Modifier
@@ -52,7 +42,16 @@ fun GameDetailsView(gameId: String, viewModel: GameViewModel = GameViewModel()) 
                 CircularProgressIndicator()
             }
         } else {
-            // Section Title
+            Text(
+                text = game!!.name.uppercase(),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
             Text(
                 text = "Players and Scores",
                 style = MaterialTheme.typography.titleMedium,
@@ -62,22 +61,14 @@ fun GameDetailsView(gameId: String, viewModel: GameViewModel = GameViewModel()) 
                     .padding(bottom = 8.dp)
             )
 
-            // Players List
-            if (game?.players.isNullOrEmpty()) {
-                Text(
-                    text = "No players available",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(game!!.players) { playerScore ->
-                        PlayerCard(playerScore.player.name, playerScore.score)
-                    }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(items = game?.players ?: emptyList()) { playerScore ->
+                    val playerName = playerScore.player.name
+                    val score = playerScore.score
+                    PlayerCard(playerName, score)
                 }
             }
         }
