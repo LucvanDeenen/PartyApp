@@ -15,9 +15,9 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
+import { mapActions } from 'vuex'
 import type { PlayerScore } from '../../types/game'
 import ScoreInput from './ScoreInput.vue'
-import { updatePlayerScore } from '../../services/games'
 
 export default defineComponent({
   name: 'PlayerScoreRow',
@@ -39,11 +39,12 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions('games', ['updatePlayerScore']),
     async updateScore(change: number) {
       const newScore = this.playerDetails.score + change
       if (newScore >= 0) {
         try {
-          await updatePlayerScore(
+          await this.updatePlayerScore(
             this.gameId,
             this.playerDetails.player.id,
             newScore

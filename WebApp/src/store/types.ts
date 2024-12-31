@@ -1,6 +1,5 @@
 import { User } from 'firebase/auth'
-import type { PlayersState } from './modules/players'
-import type { GamesState } from './modules/games'
+import type { Game, Player } from '../types/game'
 
 export interface RootState {
   auth: AuthState
@@ -18,9 +17,27 @@ export interface ThemeState {
   current: string
 }
 
+export interface GamesState {
+  games: Game[]
+  currentGame: Game | null
+  loading: boolean
+  error: string | null
+}
+
+
 export interface AuthGetters {
   isAuthenticated: boolean
   currentUser: User | null
   isGuest: boolean
   userName: string
+}
+
+export interface ThemeState {
+  current: string
+}
+
+export interface PlayersState {
+  players: Player[]
+  loading: boolean
+  error: string | null
 }

@@ -8,8 +8,8 @@
             <v-icon color="primary">mdi-account</v-icon>
           </template>
           <v-list-item-title class="d-flex align-center">
-            {{ user?.name }}
-            <profile-name-edit v-if="!user?.isGuest" />
+            <!-- {{ user?.name }} -->
+            <!-- <profile-name-edit v-if="!user?.isGuest" /> -->
           </v-list-item-title>
           <v-list-item-subtitle>Name</v-list-item-subtitle>
         </v-list-item>
@@ -18,7 +18,7 @@
           <template v-slot:prepend>
             <v-icon color="primary">mdi-email</v-icon>
           </template>
-          <v-list-item-title>{{ user?.email || 'Not available' }}</v-list-item-title>
+          <!-- <v-list-item-title>{{ user?.email || 'Not available' }}</v-list-item-title> -->
           <v-list-item-subtitle>Email</v-list-item-subtitle>
         </v-list-item>
 
@@ -36,16 +36,19 @@
 
 <script lang="ts">
 import ProfileNameEdit from './ProfileNameEdit.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'PersonalInformation',
   components: {
     ProfileNameEdit,
   },
-  data() {
-  },
   computed: {
-    memberSince() {
+    ...mapGetters('auth', ['currentUser']),
+    user() {
+      return this.currentUser as any
+    },
+    memberSince(): string {
       return new Date().toLocaleDateString()
     },
   },

@@ -88,19 +88,20 @@ export default defineComponent({
   },
   data() {
     return {
-      tempScore: 0,
+      tempScore: 0 as number,
+      showScoreDialog: false as boolean,
       buttonCounts: {
         1: 0,
         2: 0,
         3: 0,
         4: 0
-      },
-      showScoreDialog: false
+      } as Record<string, number>,
     }
   },
   computed: {
     completeSets(): number {
-      return Math.min(...Object.values(this.buttonCounts))
+      const values = Object.values(this.buttonCounts).filter((v): v is number => typeof v === 'number');
+      return Math.min(...values);
     },
     bonusPoints(): number {
       return this.completeSets * 10
@@ -120,11 +121,11 @@ export default defineComponent({
     },
     async handleManualScoreUpdate(newScore: number) {
       try {
-        await this.updatePlayerScore(
-          this.gameId,
-          this.playerDetails.player.id,
+        await this.updatePlayerScore({
+          documentId: this.gameId,
+          playerId: this.playerDetails.player.id,
           newScore
-        )
+        })
         this.playerDetails.score = newScore
       } catch (error) {
         console.error('Failed to update score:', error)
@@ -138,11 +139,11 @@ export default defineComponent({
       if (this.totalPotentialScore > 0) {
         const newScore = this.playerDetails.score + this.totalPotentialScore
         try {
-          await this.updatePlayerScore(
-            this.gameId,
-            this.playerDetails.player.id,
+          await this.updatePlayerScore({
+            documentId: this.gameId,
+            playerId: this.playerDetails.player.id,
             newScore
-          )
+          })
           this.playerDetails.score = newScore
           this.tempScore = 0
           this.resetButtonCounts()

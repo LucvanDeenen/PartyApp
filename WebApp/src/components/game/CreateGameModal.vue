@@ -28,8 +28,8 @@
             <v-card variant="outlined" max-height="300" class="overflow-y-auto">
               <v-list density="comfortable">
                 <v-list-item
-                  v-for="player in allPlayers"
-                  :key="player.id"
+                  v-for="(player, key) in allPlayers"
+                  :key="key"
                   :value="player"
                   @click="togglePlayer(player)"
                 >
@@ -71,8 +71,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters } from 'vuex'
-import type { Player } from '../../types/game'
+import { mapGetters, mapActions } from 'vuex'
+import type { Player, PlayerScore } from '../../types/game'
 
 export default defineComponent({
   name: 'CreateGameModal',
@@ -108,6 +108,7 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions('players', ['fetchPlayers']),
     closeDialog() {
       this.dialog = false
       this.resetForm()
@@ -117,10 +118,10 @@ export default defineComponent({
       this.selectedPlayers = []
     },
     isPlayerSelected(player: Player): boolean {
-      return this.selectedPlayers.some(p => p.id === player.id)
+      return this.selectedPlayers.some((p: Player) => p.id === player.id)
     },
     togglePlayer(player: Player) {
-      const index = this.selectedPlayers.findIndex(p => p.id === player.id)
+      const index = this.selectedPlayers.findIndex((p: Player) => p.id === player.id)
       if (index === -1) {
         this.selectedPlayers.push(player)
       } else {
@@ -134,7 +135,7 @@ export default defineComponent({
         this.loading = true
         await this.$emit('create', {
           name: this.gameName,
-          players: this.selectedPlayers.map(player => ({
+          players: this.selectedPlayers.map((player: PlayerScore) => ({
             player,
             score: 0
           }))
@@ -146,7 +147,7 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.$store.dispatch('players/fetchPlayers')
+    await this.fetchPlayers()
   }
 })
 </script>

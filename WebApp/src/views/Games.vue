@@ -69,7 +69,7 @@ export default defineComponent({
       if (!this.searchQuery) return this.allGames
       
       const query = this.searchQuery.toLowerCase()
-      return this.allGames.filter(game => 
+      return this.allGames.filter((game: Game) => 
         game.name.toLowerCase().includes(query)
       )
     }
