@@ -74,8 +74,8 @@ export default defineComponent({
   computed: {
     ...mapGetters('players', ['allPlayers']),
     availablePlayers(): Player[] {
-      const currentPlayerIds = this.currentPlayers.map(p => p.id)
-      return this.allPlayers.filter(p => !currentPlayerIds.includes(p.id))
+      const currentPlayerIds = this.currentPlayers.map((p: Player) => p.id)
+      return this.allPlayers.filter((p: Player) => !currentPlayerIds.includes(p.id))
     }
   },
   watch: {
@@ -92,7 +92,7 @@ export default defineComponent({
   methods: {
     ...mapActions('players', ['fetchPlayers']),
     selectPlayer(player: Player) {
-      const index = this.selectedPlayers.findIndex(p => p.id === player.id)
+      const index = this.selectedPlayers.findIndex((p: Player) => p.id === player.id)
       if (index === -1) {
         this.selectedPlayers.push(player)
       } else {

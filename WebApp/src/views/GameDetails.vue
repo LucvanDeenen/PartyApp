@@ -43,7 +43,7 @@
     </div>
 
     <!-- Add Player Modal -->
-    <add-player-modal v-if="game" v-model:show="showAddPlayerModal" :current-players="game.players.map(p => p.player)"
+    <add-player-modal v-if="game" v-model:show="showAddPlayerModal" :current-players="game.players.map((p: PlayerScore) => p.player)"
       @add="handleAddPlayers" />
   </v-container>
 </template>
@@ -53,7 +53,7 @@ import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import PlayerGrid from '../components/game/PlayerGrid.vue'
 import AddPlayerModal from '../components/game/AddPlayerModal.vue'
-import type { Game, Player } from '../types/game'
+import type { Game, Player, PlayerScore } from '../types/game'
 
 export default defineComponent({
   name: 'GameDetails',
@@ -80,7 +80,7 @@ export default defineComponent({
     },
     canAddPlayers(): boolean {
       if (!this.game || !this.currentUser) return false
-      return this.game.players.some(p => p.player.id === this.currentUser.uid)
+      return this.game.players.some((p: PlayerScore) => p.player.id === this.currentUser.uid)
     }
   },
   methods: {
