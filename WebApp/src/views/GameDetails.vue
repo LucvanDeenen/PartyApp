@@ -27,11 +27,6 @@
         <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
       </div>
 
-      <!-- Error state -->
-      <div v-else-if="error" class="d-flex justify-center align-center h-100">
-        <v-alert type="error">{{ error }}</v-alert>
-      </div>
-
       <!-- Game content -->
       <template v-else-if="game">
         <player-grid :players="game.players" :game-id="id" />
@@ -42,8 +37,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapActions } from 'vuex'
 import PlayerGrid from '../components/game/PlayerGrid.vue'
-import { getGameById } from '../services/games'
 import type { Game } from '../types/game'
 
 export default defineComponent({
@@ -60,13 +55,13 @@ export default defineComponent({
   data() {
     return {
       game: null as Game | null,
-      loading: true,
-      error: null as string | null
+      error: null as string | null,
+      loading: true as boolean,
     }
   },
   async created() {
     try {
-      this.game = await getGameById(this.id)
+      this.game = await this.fetchGameById(this.id)
       if (!this.game) {
         this.error = 'Game not found'
       }
@@ -77,6 +72,7 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions('games', ['fetchGameById']),
     goBackToGames() {
       this.$router.push('/games')
     }

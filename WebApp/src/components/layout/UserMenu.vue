@@ -17,8 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters } from 'vuex'
-import { signOutUser } from '../../services/auth'
+import { mapGetters, mapActions } from 'vuex'
 
 export default defineComponent({
   name: 'UserMenu',
@@ -26,8 +25,9 @@ export default defineComponent({
     ...mapGetters('auth', ['currentUser', 'userName'])
   },
   methods: {
+    ...mapActions('auth', ['signOut']),
     async logout() {
-      await signOutUser()
+      await this.signOut()
       this.$router.push('/login')
     }
   }

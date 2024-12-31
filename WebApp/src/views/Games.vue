@@ -12,7 +12,7 @@
             </v-col>
             <v-col cols="auto">
               <v-btn color="primary" variant="elevated" rounded="pill" class="px-4" prepend-icon="mdi-plus"
-                @click="createNewGame">
+                @click="showCreateModal = true">
                 New Game
               </v-btn>
             </v-col>
@@ -31,63 +31,68 @@
       </div>
 
       <template v-else>
-        <game-row v-for="game in games" :key="game.id" :game="game" class="ma-2" @click="navigateToGame(game)" />
+        <game-row v-for="game in filteredGames" :key="game.id" :game="game" class="ma-2" @click="navigateToGame(game)" />
       </template>
     </div>
+
+    <create-game-modal
+      v-model:show="showCreateModal"
+      @create="handleGameCreate"
+    />
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapActions, mapGetters } from 'vuex'
 import GameRow from '../components/game/GameRow.vue'
 import GameSearch from '../components/game/GameSearch.vue'
-import { getGames } from '../services/games'
-import type { Game } from '../types/game'
+import CreateGameModal from '../components/game/CreateGameModal.vue'
+import type { Game, PlayerScore } from '../types/game'
 
 export default defineComponent({
   name: 'GamesList',
   components: {
     GameRow,
     GameSearch,
+    CreateGameModal
   },
   data() {
     return {
-      allGames: [] as Game[],
-      games: [] as Game[],
-      loading: true,
-      error: null as string | null,
+      searchQuery: '',
+      showCreateModal: false
     }
   },
-  async created() {
-    try {
-      const fetchedGames = await getGames()
-      this.allGames = fetchedGames
-      this.games = fetchedGames
-    } catch (err) {
-      this.error = (err as Error).message
-    } finally {
-      this.loading = false
+  computed: {
+    ...mapGetters('games', ['allGames', 'isLoading', 'error']),
+    filteredGames(): Game[] {
+      if (!this.searchQuery) return this.allGames
+      
+      const query = this.searchQuery.toLowerCase()
+      return this.allGames.filter(game => 
+        game.name.toLowerCase().includes(query)
+      )
     }
   },
   methods: {
+    ...mapActions('games', ['fetchGames', 'createGame']),
     navigateToGame(game: Game) {
       this.$router.push(`/games/${game.id}`)
     },
-    createNewGame() {
-      console.log('Creating new game')
-    },
     handleSearch(query: string) {
-      if (!query.trim()) {
-        this.games = this.allGames
-        return
-      }
-
-      const lowercaseQuery = query.toLowerCase()
-      this.games = this.allGames.filter(game =>
-        game.name.toLowerCase().includes(lowercaseQuery)
-      )
+      this.searchQuery = query
     },
+    async handleGameCreate(gameData: { name: string, players: PlayerScore[] }) {
+      try {
+        await this.createGame(gameData)
+      } catch (error) {
+        console.error('Failed to create game:', error)
+      }
+    }
   },
+  async created() {
+    await this.fetchGames()
+  }
 })
 </script>
 

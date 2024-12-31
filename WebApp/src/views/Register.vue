@@ -38,8 +38,7 @@
 </template>
 
 <script lang="ts">
-import { UserCredential } from 'firebase/auth';
-import { signUp } from '../services/auth'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Register',
@@ -54,12 +53,13 @@ export default {
     }
   },
   methods: {
+    ...mapActions('auth', ['singUp']),
     async handleRegister() {
       try {
         this.loading = true
         this.error = ''
 
-        await signUp(this.email, this.password)
+        await this.signUp(this.email, this.password)
         this.$router.push('/games')
       } catch (e: any) {
         this.error = e.message || 'Registration failed. Please try again.'

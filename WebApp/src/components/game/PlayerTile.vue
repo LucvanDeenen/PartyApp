@@ -13,9 +13,8 @@
         <v-icon v-if="isLeader" color="accent" icon="mdi-crown" class="ml-2" size="small" />
         <v-spacer />
         <div>
-          <v-btn variant="plain" icon="mdi-pencil" density="comfortable" size="small" class="control-btn"
-            @click="modifyScore">
-          </v-btn>
+          <v-icon variant="plain" icon="mdi-pencil" density="comfortable" size="small" class="control-btn"
+            @click="showScoreDialog = true" />
         </div>
       </div>
 
@@ -32,12 +31,12 @@
 
         <!-- Confirm/Cancel buttons -->
         <div class="control-buttons" v-if="tempScore > 0">
-          <v-btn color="success" variant="tonal" icon="mdi-check" density="comfortable" size="small" class="control-btn"
-            style="margin-right: 5px !important;" @click="confirmScore">
-          </v-btn>
-          <v-btn color="error" variant="tonal" icon="mdi-close" density="comfortable" size="small" class="control-btn"
+          <v-icon color="success" variant="tonal" icon="mdi-check" density="comfortable" size="small"
+            class="control-btn" @click="confirmScore">
+          </v-icon>
+          <v-icon color="error" variant="tonal" icon="mdi-close" density="comfortable" size="small" class="control-btn"
             @click="cancelScore">
-          </v-btn>
+          </v-icon>
         </div>
       </div>
 
@@ -55,16 +54,24 @@
         </div>
       </div>
     </v-card-text>
+
+    <!-- Manual Score Dialog -->
+    <manual-score-dialog v-model:show="showScoreDialog" :current-score="playerDetails.score"
+      @save="handleManualScoreUpdate" />
   </v-card>
 </template>
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
+import { mapActions } from 'vuex'
 import type { PlayerScore } from '../../types/game'
-import { updatePlayerScore } from '../../services/games'
+import ManualScoreDialog from './ManualScoreDialog.vue'
 
 export default defineComponent({
   name: 'PlayerTile',
+  components: {
+    ManualScoreDialog
+  },
   props: {
     playerDetails: {
       type: Object as PropType<PlayerScore>,
@@ -87,7 +94,8 @@ export default defineComponent({
         2: 0,
         3: 0,
         4: 0
-      }
+      },
+      showScoreDialog: false
     }
   },
   computed: {
@@ -102,6 +110,7 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions('games', ['updatePlayerScore']),
     getInitials(name: string): string {
       return name
         .split(' ')
@@ -109,8 +118,17 @@ export default defineComponent({
         .join('')
         .toUpperCase()
     },
-    modifyScore() {
-
+    async handleManualScoreUpdate(newScore: number) {
+      try {
+        await this.updatePlayerScore(
+          this.gameId,
+          this.playerDetails.player.id,
+          newScore
+        )
+        this.playerDetails.score = newScore
+      } catch (error) {
+        console.error('Failed to update score:', error)
+      }
     },
     addToTempScore(points: number) {
       this.tempScore += points
@@ -120,11 +138,12 @@ export default defineComponent({
       if (this.totalPotentialScore > 0) {
         const newScore = this.playerDetails.score + this.totalPotentialScore
         try {
-          await updatePlayerScore(
+          await this.updatePlayerScore(
             this.gameId,
             this.playerDetails.player.id,
             newScore
           )
+          this.playerDetails.score = newScore
           this.tempScore = 0
           this.resetButtonCounts()
         } catch (error) {

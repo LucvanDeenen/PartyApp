@@ -1,8 +1,12 @@
 import { User } from 'firebase/auth'
+import type { PlayersState } from './modules/players'
+import type { GamesState } from './modules/games'
 
 export interface RootState {
   auth: AuthState
   theme: ThemeState
+  players: PlayersState
+  games: GamesState
 }
 
 export interface AuthState {
