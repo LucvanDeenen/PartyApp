@@ -13,6 +13,10 @@
           </v-col>
           <v-col cols="auto">
             <div class="d-flex align-center">
+              <v-btn v-if="canAddPlayers" color="primary" variant="text" class="mr-4" prepend-icon="mdi-account-plus"
+                @click="showAddPlayerModal = true">
+                Add Player
+              </v-btn>
               <v-icon icon="mdi-flag-checkered" color="primary" class="mr-2" />
               <span class="text-h6">Round {{ game?.round ? game.round + 1 : 1 }}</span>
             </div>
@@ -37,6 +41,10 @@
         {{ error }}
       </div>
     </div>
+
+    <!-- Add Player Modal -->
+    <add-player-modal v-if="game" v-model:show="showAddPlayerModal" :current-players="game.players.map(p => p.player)"
+      @add="handleAddPlayers" />
   </v-container>
 </template>
 
@@ -44,12 +52,14 @@
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import PlayerGrid from '../components/game/PlayerGrid.vue'
-import type { Game } from '../types/game'
+import AddPlayerModal from '../components/game/AddPlayerModal.vue'
+import type { Game, Player } from '../types/game'
 
 export default defineComponent({
   name: 'GameDetails',
   components: {
-    PlayerGrid
+    PlayerGrid,
+    AddPlayerModal
   },
   props: {
     id: {
@@ -57,22 +67,27 @@ export default defineComponent({
       required: true
     }
   },
-  computed: {
-    ...mapGetters('games', ['currentGame', 'error', 'isLoading']),
-    game(): Game | null {
-      return this.currentGame
+  data() {
+    return {
+      showAddPlayerModal: false
     }
   },
-  watch: {
-    isLoading(newValue: boolean) {
-      this.loading = newValue
+  computed: {
+    ...mapGetters('games', ['currentGame', 'error', 'isLoading']),
+    ...mapGetters('auth', ['currentUser']),
+    game(): Game | null {
+      return this.currentGame
     },
-    error(newValue: string | null) {
-      this.error = newValue
+    canAddPlayers(): boolean {
+      if (!this.game || !this.currentUser) return false
+      return this.game.players.some(p => p.player.id === this.currentUser.uid)
     }
   },
   methods: {
-    ...mapActions('games', ['fetchGameById']),
+    ...mapActions({
+      fetchGameById: 'games/fetchGameById',
+      addPlayersToGame: 'games/addPlayersToGame'
+    }),
     goBackToGames() {
       this.$router.push('/games')
     },
@@ -84,6 +99,17 @@ export default defineComponent({
         }
       } catch (err) {
         this.error = (err as Error).message
+      }
+    },
+    async handleAddPlayers(players: Player[]) {
+      try {
+        await this.addPlayersToGame({
+          gameId: this.id,
+          players
+        })
+        await this.loadGame()
+      } catch (error) {
+        console.error('Failed to add players:', error)
       }
     }
   },

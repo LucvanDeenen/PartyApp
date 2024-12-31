@@ -1,6 +1,6 @@
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { GamesState, RootState } from '../types'
-import type { Game, PlayerScore } from '../../types/game'
+import type { Game, PlayerScore, Player } from '../../types/game'
 import {
   collection,
   getDocs,
@@ -127,6 +127,37 @@ const actions: ActionTree<GamesState, RootState> = {
       })
 
       await dispatch('fetchGameById', documentId)
+    } catch (error) {
+      commit('SET_ERROR', (error as Error).message)
+      throw error
+    }
+  },
+
+  async addPlayersToGame(
+    { commit, dispatch },
+    { gameId, players }: { gameId: string; players: Player[] }
+  ): Promise<void> {
+    commit('SET_ERROR', null)
+
+    try {
+      const docRef = doc(gamesCollection, gameId)
+      const docSnap: DocumentSnapshot = await getDoc(docRef)
+
+      if (!docSnap.exists()) {
+        throw new Error(`Game with id "${gameId}" does not exist.`)
+      }
+
+      const gameData = docSnap.data() as Game
+      const newPlayerScores: PlayerScore[] = players.map(player => ({
+        player,
+        score: 0
+      }))
+
+      await updateDoc(docRef, {
+        players: [...gameData.players, ...newPlayerScores]
+      })
+
+      await dispatch('fetchGameById', gameId)
     } catch (error) {
       commit('SET_ERROR', (error as Error).message)
       throw error
