@@ -20,11 +20,4 @@ class PlayerViewModel : ViewModel() {
             _players.value = fetchedPlayers
         }
     }
-
-    fun savePlayer(player: Player) {
-        viewModelScope.launch {
-            repository.savePlayer(player)
-            loadPlayers()
-        }
-    }
 }
