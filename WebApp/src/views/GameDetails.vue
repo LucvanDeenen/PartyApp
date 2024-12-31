@@ -13,9 +13,10 @@
           </v-col>
           <v-col cols="auto">
             <div class="d-flex align-center">
-              <v-btn v-if="canAddPlayers" color="primary" variant="text" class="mr-4" prepend-icon="mdi-account-plus"
+              <v-btn v-if="canAddPlayers" color="white" disabled variant="tonal" class="mr-4" icon="mdi-cog">
+              </v-btn>
+              <v-btn v-if="canAddPlayers" color="white" variant="tonal" class="mr-4" icon="mdi-account-plus"
                 @click="showAddPlayerModal = true">
-                Add Player
               </v-btn>
               <v-icon icon="mdi-flag-checkered" color="primary" class="mr-2" />
               <span class="text-h6">Round {{ game?.round ? game.round + 1 : 1 }}</span>
@@ -125,11 +126,13 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   background-color: var(--v-surface-variant);
+  touch-action: manipulation;
 }
 
 .game-content {
   flex: 1;
   overflow-y: auto;
+  touch-action: pan-y pinch-zoom;
 }
 
 .header-card {

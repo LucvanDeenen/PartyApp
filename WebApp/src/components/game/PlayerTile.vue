@@ -44,7 +44,7 @@
       <div class="action-buttons mb-2">
         <!-- Score buttons -->
         <div class="score-buttons">
-          <v-btn v-for="points in [1, 2, 3, 4]" :key="points" color="primary" variant="tonal" density="comfortable"
+          <v-btn v-for="points in [2, 3, 4, 1]" :key="points" color="primary" variant="flat" density="comfortable"
             size="small" class="score-btn" :ripple="false" @click="addToTempScore(points)">
             +{{ points }}
             <span v-if="buttonCounts[points] > 0" class="counter-badge">
@@ -207,10 +207,14 @@ export default defineComponent({
 .control-btn {
   transition: all 0.2s ease;
   width: 50px;
+  opacity: 0.7;
 }
 
 .control-btn:hover {
   transform: translateY(-2px);
+  opacity: 1;
+  color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-theme-primary), 0.1);
 }
 
 .counter-badge {
