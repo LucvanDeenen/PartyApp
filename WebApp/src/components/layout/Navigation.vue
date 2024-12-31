@@ -39,7 +39,7 @@ export default defineComponent({
   },
   data() {
     return {
-      drawer: false
+      drawer: true
     }
   },
   methods: {

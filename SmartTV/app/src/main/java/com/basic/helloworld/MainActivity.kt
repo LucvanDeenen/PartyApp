@@ -36,6 +36,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("game_details/{gameId}") { backStackEntry ->
             val gameId = backStackEntry.arguments?.getString("gameId")
+            println("Game ID received in GameDetailsView: $gameId")
             if (gameId != null) {
                 GameDetailsView(
                     gameId = gameId
