@@ -9,6 +9,12 @@
               <h2 class="text-h5 font-weight-bold mb-0">{{ game?.name || 'Game Details' }}</h2>
             </div>
           </v-col>
+          <v-col cols="auto">
+            <div class="d-flex align-center">
+              <v-icon icon="mdi-flag-checkered" color="primary" class="mr-2" />
+              <span class="text-h6">Round {{ game?.round ? game.round + 1 : 1 }}</span>
+            </div>
+          </v-col>
         </v-row>
       </v-container>
     </v-card>
@@ -26,8 +32,7 @@
 
       <!-- Game content -->
       <template v-else-if="game">
-        <game-round :round="game.round" />
-        <game-scoreboard :players="game.players" :game-id="id" />
+        <player-grid :players="game.players" :game-id="id" />
       </template>
     </div>
   </v-container>
@@ -35,16 +40,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import GameScoreboard from '../components/game/GameScoreboard.vue'
-import GameRound from '../components/game/GameRound.vue'
+import PlayerGrid from '../components/game/PlayerGrid.vue'
 import { getGameById } from '../services/games'
 import type { Game } from '../types/game'
 
 export default defineComponent({
   name: 'GameDetails',
   components: {
-    GameScoreboard,
-    GameRound
+    PlayerGrid
   },
   props: {
     id: {

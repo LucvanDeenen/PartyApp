@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :theme="currentTheme">
     <navigation v-if="showNavigation" />
     <v-main>
       <page-transition>
@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapGetters } from 'vuex'
 import Navigation from './components/layout/Navigation.vue'
 import PageTransition from './components/transitions/PageTransition.vue'
 
@@ -21,6 +22,7 @@ export default defineComponent({
     PageTransition
   },
   computed: {
+    ...mapGetters('theme', ['currentTheme']),
     showNavigation(): boolean {
       return !['login', 'register'].includes(this.$route.name as string)
     }

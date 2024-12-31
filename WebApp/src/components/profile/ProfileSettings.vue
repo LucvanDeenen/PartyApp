@@ -10,7 +10,7 @@
           class="mb-4"></v-switch>
 
         <v-select v-model="settings.theme" :items="themes" label="Theme" variant="outlined" density="comfortable"
-          class="mb-4"></v-select>
+          class="mb-4" @update:model-value="updateTheme"></v-select>
 
         <v-btn color="primary" type="submit" block>
           Save Settings
@@ -21,22 +21,32 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+import { mapActions, mapGetters } from 'vuex'
+
+export default defineComponent({
   name: 'Settings',
   data() {
     return {
-      themes: ['Light', 'Dark', 'System'],
+      themes: ['light', 'dark'],
       settings: {
         notifications: true,
         soundEnabled: true,
-        theme: 'Light',
-      },
+        theme: 'dark'
+      }
     }
   },
+  computed: {
+    ...mapGetters('theme', ['currentTheme'])
+  },
+  created() {
+    this.settings.theme = this.currentTheme
+  },
   methods: {
+    ...mapActions('theme', ['updateTheme']),
     saveSettings() {
       console.log('Saving settings:', this.settings)
-    },
-  },
-}
+    }
+  }
+})
 </script>

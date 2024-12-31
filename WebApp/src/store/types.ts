@@ -2,6 +2,7 @@ import { User } from 'firebase/auth'
 
 export interface RootState {
   auth: AuthState
+  theme: ThemeState
 }
 
 export interface AuthState {
@@ -9,14 +10,13 @@ export interface AuthState {
   loading: boolean
 }
 
+export interface ThemeState {
+  current: string
+}
+
 export interface AuthGetters {
   isAuthenticated: boolean
   currentUser: User | null
   isGuest: boolean
   userName: string
-}
-
-export interface AuthMutations {
-  SET_USER: User | null
-  SET_LOADING: boolean
 }
