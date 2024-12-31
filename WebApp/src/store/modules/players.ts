@@ -36,7 +36,7 @@ const actions: ActionTree<PlayersState, RootState> = {
     }
   },
 
-  async addPlayer({ commit }, { id, name }: { id: string; name: string }): Promise<void> {
+  async addPlayer({ }, { id, name }: { id: string; name: string }): Promise<void> {
     try {
       const newPlayer = {
         id,
