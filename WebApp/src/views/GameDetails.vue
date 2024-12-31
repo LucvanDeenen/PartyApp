@@ -23,7 +23,7 @@
 
     <div class="game-content">
       <!-- Loading state -->
-      <div v-if="loading" class="d-flex justify-center align-center h-100">
+      <div v-if="isLoading" class="d-flex justify-center align-center h-100">
         <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
       </div>
 
@@ -31,13 +31,18 @@
       <template v-else-if="game">
         <player-grid :players="game.players" :game-id="id" />
       </template>
+
+      <!-- Error state -->
+      <div v-else class="d-flex justify-center align-center h-100 text-error">
+        {{ error }}
+      </div>
     </div>
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import PlayerGrid from '../components/game/PlayerGrid.vue'
 import type { Game } from '../types/game'
 
@@ -52,30 +57,38 @@ export default defineComponent({
       required: true
     }
   },
-  data() {
-    return {
-      game: null as Game | null,
-      error: null as string | null,
-      loading: true as boolean,
+  computed: {
+    ...mapGetters('games', ['currentGame', 'error', 'isLoading']),
+    game(): Game | null {
+      return this.currentGame
     }
   },
-  async created() {
-    try {
-      this.game = await this.fetchGameById(this.id)
-      if (!this.game) {
-        this.error = 'Game not found'
-      }
-    } catch (err) {
-      this.error = (err as Error).message
-    } finally {
-      this.loading = false
+  watch: {
+    isLoading(newValue: boolean) {
+      this.loading = newValue
+    },
+    error(newValue: string | null) {
+      this.error = newValue
     }
   },
   methods: {
     ...mapActions('games', ['fetchGameById']),
     goBackToGames() {
       this.$router.push('/games')
+    },
+    async loadGame() {
+      try {
+        await this.fetchGameById(this.id)
+        if (!this.game) {
+          this.error = 'Game not found'
+        }
+      } catch (err) {
+        this.error = (err as Error).message
+      }
     }
+  },
+  mounted() {
+    this.loadGame()
   }
 })
 </script>
