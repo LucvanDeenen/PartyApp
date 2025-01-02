@@ -13,7 +13,6 @@ import com.basic.helloworld.domain.Game
 import com.basic.helloworld.domain.Player
 import com.basic.helloworld.domain.PlayerScore
 import com.basic.helloworld.viewmodel.PlayerViewModel
-import java.util.UUID
 
 @Composable
 fun GameCreationDialog(
@@ -86,7 +85,6 @@ fun GameCreationDialog(
                     if (gameName.isNotBlank()) {
                         val playerScores = selectedPlayers.map { PlayerScore(player = it) }
                         val newGame = Game(
-                            id = UUID.randomUUID().toString(),
                             name = gameName,
                             players = playerScores
                         )

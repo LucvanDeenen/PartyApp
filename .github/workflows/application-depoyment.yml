@@ -1,13 +1,14 @@
-name: Application Deployment
+name: Smart TV App Deployment
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
-
 jobs:
   validate:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
