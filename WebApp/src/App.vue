@@ -2,9 +2,11 @@
   <v-app :theme="currentTheme">
     <navigation v-if="showNavigation" />
     <v-main>
-      <page-transition>
-        <router-view />
-      </page-transition>
+      <router-view v-slot="{ Component }">
+        <page-transition>
+          <component :is="Component" />
+        </page-transition>
+      </router-view>
     </v-main>
   </v-app>
 </template>
@@ -12,6 +14,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapGetters } from 'vuex'
+
 import Navigation from './components/layout/Navigation.vue'
 import PageTransition from './components/transitions/PageTransition.vue'
 

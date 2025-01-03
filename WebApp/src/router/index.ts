@@ -26,23 +26,19 @@ const router = createRouter({
     {
       path: '/games',
       name: 'games',
-      component: Games,
-      beforeEnter: requireAuth
+      component: Games
     },
     {
       path: '/games/:id',
       name: 'game-details',
       component: GameDetails,
-      props: true,
-      beforeEnter: requireAuth
+      props: true
     },
     {
       path: '/profile',
       name: 'profile',
-      component: Profile,
-      beforeEnter: requireAuth
+      component: Profile
     }
   ]
 })
-
 export default router
