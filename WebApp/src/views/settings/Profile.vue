@@ -19,10 +19,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import PageContainer from '../components/layout/PageContainer.vue'
-import PageHeader from '../components/layout/PageHeader.vue'
-import ProfileInfo from '../components/profile/ProfileInfo.vue'
-import ProfileSettings from '../components/profile/ProfileSettings.vue'
+import PageContainer from '@/components/layout/PageContainer.vue'
+import PageHeader from '@/components/layout/PageHeader.vue'
+import ProfileInfo from '@/components/profile/ProfileInfo.vue'
+import ProfileSettings from '@/components/profile/ProfileSettings.vue'
 
 export default defineComponent({
   name: 'Profile',

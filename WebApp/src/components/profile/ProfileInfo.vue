@@ -1,33 +1,30 @@
 <template>
   <v-card>
-    <v-card-title class="text-h6">Personal Information</v-card-title>
+    <v-card-title class="text-h6 d-flex">
+      Personal Information
+      <v-spacer></v-spacer>
+      <v-btn variant="tonal" append-icon="mdi-account-plus">
+        Create Account
+      </v-btn>
+    </v-card-title>
     <v-card-text>
       <v-list>
         <v-list-item>
           <template v-slot:prepend>
             <v-icon color="primary">mdi-account</v-icon>
           </template>
-          <v-list-item-title class="d-flex align-center">
-            <!-- {{ user?.name }} -->
-            <!-- <profile-name-edit v-if="!user?.isGuest" /> -->
-          </v-list-item-title>
           <v-list-item-subtitle>Name</v-list-item-subtitle>
+          <v-list-item-title class="d-flex align-center">
+            {{ user?.displayName }}
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item>
-          <template v-slot:prepend>
-            <v-icon color="primary">mdi-email</v-icon>
-          </template>
-          <!-- <v-list-item-title>{{ user?.email || 'Not available' }}</v-list-item-title> -->
+        <v-list-item class="mt-3">
           <v-list-item-subtitle>Email</v-list-item-subtitle>
-        </v-list-item>
-
-        <v-list-item>
           <template v-slot:prepend>
-            <v-icon color="primary">mdi-calendar</v-icon>
+            <v-icon color="primary">{{ user?.email ? 'mdi-email' : 'mdi-incognito' }}</v-icon>
           </template>
-          <v-list-item-title>Member since {{ memberSince }}</v-list-item-title>
-          <v-list-item-subtitle>Join Date</v-list-item-subtitle>
+          <v-list-item-title>{{ user?.email || 'Signed in as guest' }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card-text>
@@ -35,8 +32,9 @@
 </template>
 
 <script lang="ts">
-import ProfileNameEdit from './ProfileNameEdit.vue'
+import { UserInfo } from 'firebase/auth';
 import { mapGetters } from 'vuex'
+import ProfileNameEdit from './ProfileNameEdit.vue'
 
 export default {
   name: 'PersonalInformation',
@@ -45,11 +43,8 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['currentUser']),
-    user() {
-      return this.currentUser as any
-    },
-    memberSince(): string {
-      return new Date().toLocaleDateString()
+    user(): UserInfo {
+      return this.currentUser as UserInfo
     },
   },
 }

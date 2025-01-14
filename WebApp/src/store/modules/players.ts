@@ -42,6 +42,7 @@ const actions: ActionTree<PlayersState, RootState> = {
         id,
         name
       };
+
       await addDoc(collection(db, 'players'), newPlayer);
     } catch (error) {
       console.error('Error adding player:', error);

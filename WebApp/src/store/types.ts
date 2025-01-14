@@ -10,6 +10,7 @@ export interface RootState {
 
 export interface AuthState {
   user: User | null
+  isGuest: boolean
   loading: boolean
 }
 
@@ -29,7 +30,6 @@ export interface AuthGetters {
   isAuthenticated: boolean
   currentUser: User | null
   isGuest: boolean
-  userName: string
 }
 
 export interface ThemeState {
