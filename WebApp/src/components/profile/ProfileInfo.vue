@@ -44,7 +44,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['currentUser']),
     user(): UserInfo {
-      return this.currentUser as UserInfo
+      return this.currentUser as any
     },
   },
 }
