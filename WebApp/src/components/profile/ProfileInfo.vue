@@ -33,8 +33,8 @@
 
 <script lang="ts">
 import { UserInfo } from 'firebase/auth';
-import { mapGetters } from 'vuex'
-import ProfileNameEdit from './ProfileNameEdit.vue'
+import { mapGetters } from 'vuex';
+import ProfileNameEdit from './ProfileNameEdit.vue';
 
 export default {
   name: 'PersonalInformation',
@@ -43,9 +43,9 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['currentUser']),
-    user(): UserInfo {
-      return this.currentUser as any
+    user(): UserInfo | null {
+      return this.currentUser as UserInfo | null; // Ensure proper type casting
     },
   },
-}
+};
 </script>
