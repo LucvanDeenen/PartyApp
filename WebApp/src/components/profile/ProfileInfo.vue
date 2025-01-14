@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="user">
     <v-card-title class="text-h6 d-flex">
       Personal Information
       <v-spacer></v-spacer>
