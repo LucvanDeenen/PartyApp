@@ -45,10 +45,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import GameRow from '../components/game/GameRow.vue'
-import GameSearch from '../components/game/GameSearch.vue'
-import CreateGameModal from '../components/game/CreateGameModal.vue'
-import type { Game, PlayerScore } from '../types/game'
+import type { Game, PlayerScore } from '@/types/game'
+import GameRow from '@/components/game/GameRow.vue'
+import GameSearch from '@/components/game/GameSearch.vue'
+import CreateGameModal from '@/components/game/CreateGameModal.vue'
 
 export default defineComponent({
   name: 'GamesList',

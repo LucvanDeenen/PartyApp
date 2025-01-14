@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { requireAuth } from './guards'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import Profile from '../views/Profile.vue'
-import Games from '../views/Games.vue'
-import GameDetails from '../views/GameDetails.vue'
+// import { requireAuth } from './guards'
+
+import Login from '@/views/login/Login.vue'
+import GuestLogin from '@/views/login/GuestLogin.vue'
+import Register from '@/views/login/Register.vue'
+import Profile from '@/views/settings/Profile.vue'
+import Games from '@/views/game/Games.vue'
+import GameDetails from '@/views/game/GameDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +19,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/login/guest',
+      name: 'login-guest',
+      component: GuestLogin
     },
     {
       path: '/register',

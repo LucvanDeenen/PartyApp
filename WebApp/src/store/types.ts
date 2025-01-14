@@ -30,7 +30,6 @@ export interface AuthGetters {
   isAuthenticated: boolean
   currentUser: User | null
   isGuest: boolean
-  userName: string
 }
 
 export interface ThemeState {

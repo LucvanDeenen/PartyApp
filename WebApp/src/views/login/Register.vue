@@ -59,7 +59,7 @@ export default {
         this.loading = true
         this.error = ''
 
-        await this.signUp(this.email, this.password, this.name)
+        await this.signUp({ email: this.email, password: this.password, name: this.name })
         this.$router.push('/games')
       } catch (e: any) {
         this.error = e.message || 'Registration failed. Please try again.'

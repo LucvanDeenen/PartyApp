@@ -3,9 +3,7 @@
     <navigation v-if="showNavigation" />
     <v-main>
       <router-view v-slot="{ Component }">
-        <page-transition>
-          <component :is="Component" />
-        </page-transition>
+        <component :is="Component" />
       </router-view>
     </v-main>
   </v-app>
@@ -14,9 +12,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapGetters } from 'vuex'
-
-import Navigation from './components/layout/Navigation.vue'
-import PageTransition from './components/transitions/PageTransition.vue'
+import Navigation from '@/components/layout/Navigation.vue'
+import PageTransition from '@/components/transitions/PageTransition.vue'
 
 export default defineComponent({
   name: 'AppRoot',
@@ -27,7 +24,7 @@ export default defineComponent({
   computed: {
     ...mapGetters('theme', ['currentTheme']),
     showNavigation(): boolean {
-      return !['login', 'register'].includes(this.$route.name as string)
+      return !['login', 'register', 'login-guest'].includes(this.$route.name as string)
     }
   }
 })

@@ -12,7 +12,7 @@ import {
   User,
   UserCredential,
 } from 'firebase/auth'
-import guestNames from './auth-guest.json'
+import guestNames from '../data/auth-guest.json'
 
 const mutations: MutationTree<AuthState> = {
   SET_USER(state: AuthState, user: User | null) {
@@ -27,19 +27,25 @@ const mutations: MutationTree<AuthState> = {
 }
 
 const actions: ActionTree<AuthState, RootState> = {
+  async getRandomGuestName(): Promise<string> {
+    const randomIndex = Math.floor(Math.random() * guestNames.length);
+    return guestNames[randomIndex];
+  },
+
   async init({ commit }): Promise<void> {
     try {
       await setPersistence(auth, browserLocalPersistence)
-      const user: User = auth.currentUser ?
-        auth.currentUser :
-        await this.dispatch('auth/signInAsGuest');
+      const user: User | null = auth.currentUser;
 
-      commit('SET_USER', user)
-      commit('SET_LOADING', false)
+      if (user) {
+        commit('SET_USER', user)
+        commit('SET_LOADING', false)
 
-      if (user.isAnonymous) {
-        commit('SET_IS_GUEST', true)
+        if (user.isAnonymous) {
+          commit('SET_IS_GUEST', true)
+        }
       }
+
 
       auth.onAuthStateChanged((user: User | null) => {
         commit('SET_USER', user)
@@ -60,26 +66,23 @@ const actions: ActionTree<AuthState, RootState> = {
       const user = userCredential.user
 
       commit('SET_USER', user)
-      commit('SET_IS_GUEST', true)
+      commit('SET_IS_GUEST', false)
     } catch (error) {
       console.error('Error signing in:', error)
       throw error
     }
   },
-  async signInAsGuest({ commit, dispatch }, guestName?: string): Promise<void> {
-    if (!guestName) {
-      const randomIndex = Math.floor(Math.random() * guestNames.length);
-      guestName = guestNames[randomIndex];
-    }
 
+  async signInAsGuest({ commit, dispatch }, { name }: { name: string }): Promise<void> {
     try {
       const userCredential: UserCredential = await signInAnonymously(auth);
       const user = userCredential.user;
 
-      await updateProfile(user, { displayName: guestName });
+      await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
+      commit('SET_IS_GUEST', true)
 
-      await dispatch('players/addPlayer', { id: user.uid, name: guestName }, { root: true });
+      await dispatch('players/addPlayer', { id: user.uid, name }, { root: true });
     } catch (error) {
       console.error('Error signing in as guest:', error);
       throw error;
@@ -94,7 +97,7 @@ const actions: ActionTree<AuthState, RootState> = {
       await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
 
-      await dispatch('players/addPlayer', { id: user.uid, name: name }, { root: true });
+      await dispatch('players/addPlayer', { id: user.uid, name }, { root: true });
     } catch (error) {
       console.error('Error signing up:', error);
       throw error;
@@ -116,7 +119,6 @@ const getters: GetterTree<AuthState, RootState> = {
   isAuthenticated: (state: AuthState): boolean => !!state.user,
   currentUser: (state: AuthState): User | null => state.user,
   isGuest: (state: AuthState): boolean => state.user?.isAnonymous || false,
-  userName: (state: AuthState): string => state.user?.displayName || ''
 }
 
 const authModule: Module<AuthState, RootState> = {

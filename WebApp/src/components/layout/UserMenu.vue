@@ -1,11 +1,11 @@
 <template>
-  <v-list v-if="currentUser">
+  <v-list v-if="user">
     <v-list-item>
       <v-list-item-title class="text-body-2">
-        {{ userName }}
+        {{ user?.displayName }}
       </v-list-item-title>
       <v-list-item-subtitle class="text-caption">
-        {{ currentUser.email }}
+        {{ user?.email ? user.email : 'Signed in as guest' }}
       </v-list-item-subtitle>
 
       <template #append>
@@ -16,13 +16,17 @@
 </template>
 
 <script lang="ts">
+import { UserInfo } from 'firebase/auth';
 import { defineComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default defineComponent({
   name: 'UserMenu',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'userName'])
+    ...mapGetters('auth', ['currentUser']),
+    user(): UserInfo {
+      return this.currentUser as UserInfo
+    },
   },
   methods: {
     ...mapActions('auth', ['signOut']),

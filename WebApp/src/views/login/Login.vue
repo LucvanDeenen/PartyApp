@@ -19,7 +19,7 @@
               Login
             </v-btn>
 
-            <v-btn block variant="tonal" size="large" class="mt-2" :disabled="loading" @click="showGuestPrompt = true">
+            <v-btn block variant="tonal" size="large" class="mt-2" :disabled="loading" @click="$router.push('/login/guest')">
               Continue as Guest
             </v-btn>
 
@@ -35,21 +35,15 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <guest-name-prompt v-model:show="showGuestPrompt" @submit="handleGuestLogin" />
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import GuestNamePrompt from '../components/auth/GuestNamePrompt.vue'
 
 export default defineComponent({
   name: 'LoginView',
-  components: {
-    GuestNamePrompt
-  },
   data() {
     return {
       email: '',
@@ -58,13 +52,13 @@ export default defineComponent({
       loading: false,
       popup: false,
       timeout: 4000,
-      error: '',
-      showGuestPrompt: false
+      error: ''
     }
   },
   computed: {
     ...mapGetters('auth', ['isAuthenticated'])
   },
+  // TODO: Move this into store handler
   watch: {
     isAuthenticated: {
       immediate: true,
@@ -77,7 +71,7 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapActions('auth', ['signIn', 'signInAsGuest']),
+    ...mapActions('auth', ['signIn']),
     async handleLogin() {
       try {
         this.loading = true
@@ -86,20 +80,6 @@ export default defineComponent({
       } catch (e) {
         this.popup = true;
         this.error = 'Invalid email or password. Please try again.'
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async handleGuestLogin(guestName: string) {
-      try {
-        this.loading = true
-        this.error = ''
-        await this.signInAsGuest(guestName)
-        this.showGuestPrompt = false
-      } catch (e) {
-        this.popup = true;
-        this.error = 'Guest login failed. Please try again.'
       } finally {
         this.loading = false
       }
