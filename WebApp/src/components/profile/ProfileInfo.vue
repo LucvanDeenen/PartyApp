@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['currentUser']),
-    user(): UserInfo | null {
+    user(): any | null {
       return this.currentUser as UserInfo | null; // Ensure proper type casting
     },
   },
