@@ -14,6 +14,10 @@
       <v-list-item to="/profile" prepend-icon="mdi-account">
         Profile
       </v-list-item>
+
+      <v-list-item to="/users" prepend-icon="mdi-account-group">
+        Users
+      </v-list-item>
     </v-list>
 
     <template v-slot:append>

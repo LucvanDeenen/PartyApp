@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import { requireAuth } from './guards'
+import { requireAuth } from './guards'
 
 import Login from '@/views/login/Login.vue'
 import GuestLogin from '@/views/login/GuestLogin.vue'
@@ -7,13 +7,14 @@ import Register from '@/views/login/Register.vue'
 import Profile from '@/views/settings/Profile.vue'
 import Games from '@/views/game/Games.vue'
 import GameDetails from '@/views/game/GameDetails.vue'
+import UserManagement from '@/views/user/UserManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/games'
     },
     {
       path: '/login',
@@ -45,7 +46,13 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile
-    }
+    },
+    {
+      path: '/users',
+      name: 'Users',
+      component: UserManagement,
+      beforeEnter: requireAuth
+    },
   ]
 })
 export default router

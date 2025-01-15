@@ -6,6 +6,7 @@
           <v-card-title class="text-center text-h5 mb-4">
             Login
           </v-card-title>
+          {{ currentUser.displayName }}
           <v-form @submit.prevent="handleLogin">
             <v-text-field v-model="email" label="Email" type="email" required variant="outlined"
               prepend-inner-icon="mdi-email"></v-text-field>
@@ -56,7 +57,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters('auth', ['isAuthenticated'])
+    ...mapGetters('auth', ['isAuthenticated', 'currentUser'])
   },
   // TODO: Move this into store handler
   watch: {

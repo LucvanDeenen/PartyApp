@@ -17,30 +17,33 @@ const mutations: MutationTree<PlayersState> = {
 }
 
 const actions: ActionTree<PlayersState, RootState> = {
-  async fetchPlayers({ commit }): Promise<void> {
+  async fetchPlayers({ commit, getters }): Promise<void> {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
 
-    try {
-      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(collection(db, 'players'))
-      const players: Player[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Player[]
+    const storedPlayers: Player[] = getters.allPlayers;
+    console.log(storedPlayers)
+    // try {
+    //   const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(collection(db, 'players'))
+    //   const players: Player[] = querySnapshot.docs.map((doc) => ({
+    //     id: doc.id,
+    //     ...doc.data()
+    //   })) as Player[]
 
-      commit('SET_PLAYERS', players)
-    } catch (error) {
-      commit('SET_ERROR', (error as Error).message)
-    } finally {
-      commit('SET_LOADING', false)
-    }
+    //   commit('SET_PLAYERS', players)
+    // } catch (error) {
+    //   commit('SET_ERROR', (error as Error).message)
+    // } finally {
+    //   commit('SET_LOADING', false)
+    // }
   },
 
-  async addPlayer({ }, { id, name }: { id: string; name: string }): Promise<void> {
+  async addPlayer({ }, { id, name, role }: { id: string; name: string; role: string; }): Promise<void> {
     try {
       const newPlayer = {
         id,
-        name
+        name,
+        role
       };
 
       await addDoc(collection(db, 'players'), newPlayer);
@@ -48,7 +51,7 @@ const actions: ActionTree<PlayersState, RootState> = {
       console.error('Error adding player:', error);
       throw error;
     }
-  }
+  },
 }
 
 const getters: GetterTree<PlayersState, RootState> = {

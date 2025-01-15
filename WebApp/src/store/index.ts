@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import { RootState } from './types'
 import auth from './modules/auth'
 import theme from './modules/theme'
@@ -11,5 +12,6 @@ export default createStore<RootState>({
     theme,
     players,
     games
-  }
+  },
+  plugins: [createPersistedState()]
 })

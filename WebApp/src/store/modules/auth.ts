@@ -12,7 +12,8 @@ import {
   User,
   UserCredential,
 } from 'firebase/auth'
-import guestNames from '../data/auth-guest.json'
+import guestNames from '@/store/data/auth-guest.json'
+import { UserRole } from '@/store/data/roles'
 
 const mutations: MutationTree<AuthState> = {
   SET_USER(state: AuthState, user: User | null) {
@@ -23,6 +24,9 @@ const mutations: MutationTree<AuthState> = {
   },
   SET_LOADING(state: AuthState, loading: boolean) {
     state.loading = loading
+  },
+  SET_ROLE(state: AuthState, role: string) {
+    state.role = role;
   }
 }
 
@@ -73,31 +77,33 @@ const actions: ActionTree<AuthState, RootState> = {
     }
   },
 
-  async signInAsGuest({ commit, dispatch }, { name }: { name: string }): Promise<void> {
+  async signInAsGuest({ commit, dispatch }, { name }: { name: string; }): Promise<void> {
     try {
       const userCredential: UserCredential = await signInAnonymously(auth);
       const user = userCredential.user;
 
       await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
-      commit('SET_IS_GUEST', true)
+      commit('SET_IS_GUEST', true);
+      commit('SET_ROLE', UserRole.GUEST);
 
-      await dispatch('players/addPlayer', { id: user.uid, name }, { root: true });
+      await dispatch('players/addPlayer', { id: user.uid, name, role: UserRole.GUEST }, { root: true });
     } catch (error) {
       console.error('Error signing in as guest:', error);
       throw error;
     }
   },
 
-  async signUp({ commit, dispatch }, { email, password, name }: { email: string; password: string; name: string }): Promise<void> {
+  async signUp({ commit, dispatch }, { email, password, name }: { email: string; password: string; name: string; role?: UserRole }): Promise<void> {
     try {
       const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
+      commit('SET_ROLE', UserRole.USER);
 
-      await dispatch('players/addPlayer', { id: user.uid, name }, { root: true });
+      await dispatch('players/addPlayer', { id: user.uid, name, role: UserRole.USER }, { root: true });
     } catch (error) {
       console.error('Error signing up:', error);
       throw error;
@@ -119,6 +125,7 @@ const getters: GetterTree<AuthState, RootState> = {
   isAuthenticated: (state: AuthState): boolean => !!state.user,
   currentUser: (state: AuthState): User | null => state.user,
   isGuest: (state: AuthState): boolean => state.user?.isAnonymous || false,
+  userRole: (state: AuthState): string => state.role,
 }
 
 const authModule: Module<AuthState, RootState> = {
@@ -126,7 +133,8 @@ const authModule: Module<AuthState, RootState> = {
   state: (): AuthState => ({
     user: null,
     isGuest: false,
-    loading: true
+    loading: true,
+    role: ''
   }),
   mutations,
   actions,

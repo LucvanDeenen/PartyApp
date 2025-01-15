@@ -12,6 +12,7 @@ export interface AuthState {
   user: User | null
   isGuest: boolean
   loading: boolean
+  role: string
 }
 
 export interface ThemeState {
