@@ -1,4 +1,4 @@
-import { collection, getDocs, QuerySnapshot, DocumentData, setDoc, doc, deleteDoc } from 'firebase/firestore'
+import { collection, getDocs, QuerySnapshot, DocumentData, setDoc, doc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../firebase'
 import { PlayersState, RootState } from '../types'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
@@ -20,24 +20,30 @@ const mutations: MutationTree<PlayersState> = {
 
 const actions: ActionTree<PlayersState, RootState> = {
   async fetchPlayers({ commit, getters }): Promise<void> {
-    // commit('SET_LOADING', true)
-    // commit('SET_ERROR', null)
-
-    const storedPlayers: Player[] = getters.allPlayers;
-    console.log(storedPlayers)
-    // try {
-    //   const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(collection(db, 'players'))
-    //   const players: Player[] = querySnapshot.docs.map((doc) => ({
-    //     id: doc.id,
-    //     ...doc.data()
-    //   })) as Player[]
-
-    //   commit('SET_PLAYERS', players)
-    // } catch (error) {
-    //   commit('SET_ERROR', (error as Error).message)
-    // } finally {
-    //   commit('SET_LOADING', false)
+    // const storedPlayers: Player[] = getters.allPlayers;
+    // if (storedPlayers && storedPlayers.length > 0) {
+    //   console.log("Data already populated");
+    //   return;
     // }
+
+    commit('SET_LOADING', true);
+    commit('SET_ERROR', null);
+
+    try {
+      onSnapshot(playersCollection, (querySnapshot) => {
+        console.log('updating data');
+        const players: Player[] = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Player[];
+
+        commit('SET_PLAYERS', players);
+      });
+    } catch (error) {
+      commit('SET_ERROR', (error as Error).message);
+    } finally {
+      commit('SET_LOADING', false);
+    }
   },
 
   async addPlayer({ }, newPlayer: Player): Promise<void> {
