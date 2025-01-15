@@ -1,7 +1,7 @@
 export interface Player {
   id: string
   name: string
-  role: string | null
+  role: string
 }
 
 export interface PlayerScore {

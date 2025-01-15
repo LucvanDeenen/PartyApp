@@ -91,7 +91,7 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.fetchGames()
+    // await this.fetchGames()
   }
 })
 </script>
