@@ -3,7 +3,7 @@
     <v-card-title class="text-h6 d-flex">
       Personal Information
       <v-spacer></v-spacer>
-      <v-btn variant="tonal" append-icon="mdi-account-plus">
+      <v-btn v-if="!user.email" disabled variant="tonal" append-icon="mdi-account-plus">
         Create Account
       </v-btn>
     </v-card-title>
@@ -43,6 +43,7 @@ export default defineComponent({
     ProfileNameEdit,
   },
   computed: {
+    ...mapGetters('auth', ['currentUser']),
     user(): UserInfo {
       return this.currentUser as UserInfo;
     },
