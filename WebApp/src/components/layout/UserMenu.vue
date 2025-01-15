@@ -2,10 +2,10 @@
   <v-list v-if="user">
     <v-list-item>
       <v-list-item-title class="text-body-2">
-        {{ user?.displayName }}
+        {{ user.displayName }}
       </v-list-item-title>
       <v-list-item-subtitle class="text-caption">
-        {{ user?.email ? user.email : 'Signed in as guest' }}
+        {{ user.email ? user.email : 'Signed in as guest' }}
       </v-list-item-subtitle>
 
       <template #append>
