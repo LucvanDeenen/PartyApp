@@ -1,6 +1,6 @@
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { RootState, AuthState } from '../types'
-import { auth } from '../../../firebase'
+import { auth, db } from '../../../firebase'
 import {
   browserLocalPersistence,
   setPersistence,
@@ -14,13 +14,12 @@ import {
 } from 'firebase/auth'
 import guestNames from '@/store/data/auth-guest.json'
 import { UserRole } from '@/store/data/roles'
+import { doc, DocumentData, DocumentSnapshot, getDoc } from 'firebase/firestore'
+import { Player } from '@/types/game'
 
 const mutations: MutationTree<AuthState> = {
   SET_USER(state: AuthState, user: User | null) {
     state.user = user
-  },
-  SET_IS_GUEST(state: AuthState, isGuest: boolean) {
-    state.isGuest = isGuest
   },
   SET_LOADING(state: AuthState, loading: boolean) {
     state.loading = loading
@@ -44,19 +43,11 @@ const actions: ActionTree<AuthState, RootState> = {
       if (user) {
         commit('SET_USER', user)
         commit('SET_LOADING', false)
-
-        if (user.isAnonymous) {
-          commit('SET_IS_GUEST', true)
-        }
       }
-
 
       auth.onAuthStateChanged((user: User | null) => {
         commit('SET_USER', user)
         commit('SET_LOADING', false)
-        if (user?.isAnonymous) {
-          commit('SET_IS_GUEST', true)
-        }
       })
     } catch (error) {
       console.error('Error setting persistence:', error)
@@ -67,10 +58,18 @@ const actions: ActionTree<AuthState, RootState> = {
   async signIn({ commit }, { email, password }: { email: string; password: string }): Promise<void> {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user
-
+      const user: User = userCredential.user
       commit('SET_USER', user)
-      commit('SET_IS_GUEST', false)
+
+      const playerDoc: DocumentSnapshot<DocumentData> = await getDoc(doc(db, 'players', user.uid));
+      if (playerDoc.data() === undefined) {
+        commit('SET_ROLE', UserRole.GUEST)
+        console.error('Error fetching profile')
+        return;
+      }
+
+      const player: Player = playerDoc.data() as Player
+      commit('SET_ROLE', player.role)
     } catch (error) {
       console.error('Error signing in:', error)
       throw error
@@ -84,7 +83,6 @@ const actions: ActionTree<AuthState, RootState> = {
 
       await updateProfile(user, { displayName: name });
       commit('SET_USER', user);
-      commit('SET_IS_GUEST', true);
       commit('SET_ROLE', UserRole.GUEST);
 
       await dispatch('players/addPlayer', { id: user.uid, name, role: UserRole.GUEST }, { root: true });
@@ -114,6 +112,7 @@ const actions: ActionTree<AuthState, RootState> = {
     try {
       await signOut(auth)
       commit('SET_USER', null)
+      commit('SET_ROLE', '');
     } catch (error) {
       console.error('Error signing out:', error)
       throw error
@@ -124,7 +123,6 @@ const actions: ActionTree<AuthState, RootState> = {
 const getters: GetterTree<AuthState, RootState> = {
   isAuthenticated: (state: AuthState): boolean => !!state.user,
   currentUser: (state: AuthState): User | null => state.user,
-  isGuest: (state: AuthState): boolean => state.user?.isAnonymous || false,
   userRole: (state: AuthState): string => state.role,
 }
 
@@ -132,7 +130,6 @@ const authModule: Module<AuthState, RootState> = {
   namespaced: true,
   state: (): AuthState => ({
     user: null,
-    isGuest: false,
     loading: true,
     role: ''
   }),

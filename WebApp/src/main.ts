@@ -11,5 +11,4 @@ app.use(vuetify)
 app.use(store)
 
 store.dispatch('auth/init')
-
 app.mount('#app')

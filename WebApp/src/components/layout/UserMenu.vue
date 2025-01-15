@@ -23,13 +23,10 @@ import { mapGetters, mapActions } from 'vuex'
 export default defineComponent({
   name: 'UserMenu',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'userRole']),
+    ...mapGetters('auth', ['currentUser']),
     user(): UserInfo {
       return this.currentUser as UserInfo
-    },
-    role(): string {
-      return this.userRole as string
-    },
+    }
   },
   methods: {
     ...mapActions('auth', ['signOut']),

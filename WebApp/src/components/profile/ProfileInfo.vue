@@ -51,12 +51,12 @@ export default defineComponent({
     ProfileNameEdit,
   },
   computed: {
-    ...mapGetters('auth', ['currentUser']),
+    ...mapGetters('auth', ['currentUser', 'userRole']),
     user(): UserInfo {
       return this.currentUser as UserInfo;
     },
     role(): string {
-      return this.$store.getters['auth/userRole'];
+      return this.userRole as string;
     }
   },
   methods: {

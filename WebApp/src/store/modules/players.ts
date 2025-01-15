@@ -1,8 +1,10 @@
-import { collection, getDocs, QuerySnapshot, DocumentData, addDoc } from 'firebase/firestore'
+import { collection, getDocs, QuerySnapshot, DocumentData, setDoc, doc, deleteDoc } from 'firebase/firestore'
 import { db } from '../../../firebase'
 import { PlayersState, RootState } from '../types'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { Player } from '@/types/game'
+
+const playersCollection = collection(db, 'players')
 
 const mutations: MutationTree<PlayersState> = {
   SET_PLAYERS(state: PlayersState, players: Player[]) {
@@ -18,8 +20,8 @@ const mutations: MutationTree<PlayersState> = {
 
 const actions: ActionTree<PlayersState, RootState> = {
   async fetchPlayers({ commit, getters }): Promise<void> {
-    commit('SET_LOADING', true)
-    commit('SET_ERROR', null)
+    // commit('SET_LOADING', true)
+    // commit('SET_ERROR', null)
 
     const storedPlayers: Player[] = getters.allPlayers;
     console.log(storedPlayers)
@@ -38,15 +40,10 @@ const actions: ActionTree<PlayersState, RootState> = {
     // }
   },
 
-  async addPlayer({ }, { id, name, role }: { id: string; name: string; role: string; }): Promise<void> {
+  async addPlayer({ }, newPlayer: Player): Promise<void> {
     try {
-      const newPlayer = {
-        id,
-        name,
-        role
-      };
-
-      await addDoc(collection(db, 'players'), newPlayer);
+      const playerDocRef = doc(playersCollection, newPlayer.id);
+      await setDoc(playerDocRef, newPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
       throw error;
