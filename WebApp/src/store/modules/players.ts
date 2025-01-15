@@ -1,4 +1,4 @@
-import { collection, getDocs, QuerySnapshot, DocumentData, setDoc, doc, deleteDoc, onSnapshot } from 'firebase/firestore'
+import { collection, setDoc, doc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../firebase'
 import { PlayersState, RootState } from '../types'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
@@ -19,19 +19,23 @@ const mutations: MutationTree<PlayersState> = {
 }
 
 const actions: ActionTree<PlayersState, RootState> = {
-  async fetchPlayers({ commit, getters }): Promise<void> {
-    // const storedPlayers: Player[] = getters.allPlayers;
-    // if (storedPlayers && storedPlayers.length > 0) {
-    //   console.log("Data already populated");
-    //   return;
-    // }
+  async fetchPlayers({ commit, dispatch, getters }): Promise<void> {
+    const storedPlayers: Player[] = getters.allPlayers;
+    if (storedPlayers && storedPlayers.length > 0) {
+      return;
+    }
 
     commit('SET_LOADING', true);
     commit('SET_ERROR', null);
+    dispatch('subscibeToPlayers');
+  },
 
+  async subscibeToPlayers({ commit, dispatch }): Promise<void> {
     try {
+      commit('SET_LOADING', true);
+      commit('SET_ERROR', null);
       onSnapshot(playersCollection, (querySnapshot) => {
-        console.log('updating data');
+        
         const players: Player[] = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -55,6 +59,17 @@ const actions: ActionTree<PlayersState, RootState> = {
       throw error;
     }
   },
+
+  async deletePlayer({ commit, state, dispatch }, playerId: string): Promise<void> {
+    try {
+      // await deleteDoc(doc(db, 'players', playerId));
+      await dispatch('users/removeUser', playerId, { root: true });
+      // commit('SET_PLAYERS', state.players.filter(player => player.id !== playerId));
+    } catch (error) {
+      console.error('Error deleting player:', error);
+      throw error;
+    }
+  }
 }
 
 const getters: GetterTree<PlayersState, RootState> = {

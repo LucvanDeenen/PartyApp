@@ -7,13 +7,15 @@ export const requireAuth = (
   next: NavigationGuardNext
 ) => {
   const auth = getAuth()
-  
-  if (!auth.currentUser) {
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  } else {
-    next()
-  }
+
+  console.log(auth);
+  next();
+  // if (!auth.currentUser) {
+  //   next({
+  //     path: '/login',
+  //     query: { redirect: to.fullPath }
+  //   })
+  // } else {
+  //   next()
+  // }
 }

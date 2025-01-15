@@ -1,6 +1,6 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from "firebase/firestore";
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { Auth, getAuth } from 'firebase/auth';
+import { Firestore, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,6 +12,6 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const app: FirebaseApp = initializeApp(firebaseConfig);
+export const auth: Auth = getAuth(app);
+export const db: Firestore = getFirestore(app);

@@ -11,6 +11,7 @@ import {
   signOut,
   User,
   UserCredential,
+  
 } from 'firebase/auth'
 import guestNames from '@/store/data/auth-guest.json'
 import { UserRole } from '@/store/data/roles'
@@ -34,7 +35,6 @@ const actions: ActionTree<AuthState, RootState> = {
     const randomIndex = Math.floor(Math.random() * guestNames.length);
     return guestNames[randomIndex];
   },
-
   async init({ commit }): Promise<void> {
     try {
       await setPersistence(auth, browserLocalPersistence)
@@ -54,7 +54,6 @@ const actions: ActionTree<AuthState, RootState> = {
       throw error
     }
   },
-
   async signIn({ commit }, { email, password }: { email: string; password: string }): Promise<void> {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password)
@@ -75,7 +74,6 @@ const actions: ActionTree<AuthState, RootState> = {
       throw error
     }
   },
-
   async signInAsGuest({ commit, dispatch }, { name }: { name: string; }): Promise<void> {
     try {
       const userCredential: UserCredential = await signInAnonymously(auth);
@@ -91,7 +89,6 @@ const actions: ActionTree<AuthState, RootState> = {
       throw error;
     }
   },
-
   async signUp({ commit, dispatch }, { email, password, name }: { email: string; password: string; name: string; role?: UserRole }): Promise<void> {
     try {
       const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -107,7 +104,6 @@ const actions: ActionTree<AuthState, RootState> = {
       throw error;
     }
   },
-
   async signOut({ commit }): Promise<void> {
     try {
       await signOut(auth)
