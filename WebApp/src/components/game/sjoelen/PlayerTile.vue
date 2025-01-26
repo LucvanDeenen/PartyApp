@@ -64,7 +64,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import { mapActions } from 'vuex'
-import type { PlayerScore } from '../../types/game'
+import type { PlayerScore } from '../../../types/game'
 import ManualScoreDialog from './ManualScoreDialog.vue'
 
 export default defineComponent({

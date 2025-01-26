@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import type { Game } from '../../types/game'
+import type { Game } from '../../../types/game'
 
 export default defineComponent({
   name: 'GameRow',

@@ -26,14 +26,6 @@
           </template>
           <v-list-item-title>{{ user.email || 'Signed in as guest' }}</v-list-item-title>
         </v-list-item>
-
-        <v-list-item class="mt-3">
-          <v-list-item-subtitle>Role</v-list-item-subtitle>
-          <template v-slot:prepend>
-            <v-icon color="primary">mdi-account-badge</v-icon>
-          </template>
-          <v-list-item-title>{{ role }}</v-list-item-title>
-        </v-list-item>
       </v-list>
     </v-card-text>
   </v-card>
@@ -51,12 +43,9 @@ export default defineComponent({
     ProfileNameEdit,
   },
   computed: {
-    ...mapGetters('auth', ['currentUser', 'userRole']),
+    ...mapGetters('auth', ['currentUser']),
     user(): UserInfo {
       return this.currentUser as UserInfo;
-    },
-    role(): string {
-      return this.userRole as string;
     }
   },
   methods: {

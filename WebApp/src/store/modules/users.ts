@@ -1,9 +1,12 @@
 import { ActionTree, Module } from 'vuex/types/index.js'
 import { RootState } from '../types'
+import * as admin from 'firebase/auth'
+import { User } from 'firebase/auth';
 
 const actions: ActionTree<null, RootState> = {
-  async removeUser({ }, uid: string): Promise<void> {
+  async removeUser({ }, user: User): Promise<void> {
     try {
+      await admin.deleteUser(user);
     } catch (error) {
       console.error('Error removing user data:', error);
       throw error;

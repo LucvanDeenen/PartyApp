@@ -3,6 +3,7 @@ import { db } from '../../../firebase'
 import { PlayersState, RootState } from '../types'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { Player } from '@/types/game'
+import { User } from 'firebase/auth'
 
 const playersCollection = collection(db, 'players')
 
@@ -63,7 +64,7 @@ const actions: ActionTree<PlayersState, RootState> = {
   async deletePlayer({ commit, state, dispatch }, playerId: string): Promise<void> {
     try {
       // await deleteDoc(doc(db, 'players', playerId));
-      await dispatch('users/removeUser', playerId, { root: true });
+      await dispatch('users/removeUser', { uid: playerId } as User, { root: true });
       // commit('SET_PLAYERS', state.players.filter(player => player.id !== playerId));
     } catch (error) {
       console.error('Error deleting player:', error);

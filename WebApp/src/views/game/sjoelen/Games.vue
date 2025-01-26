@@ -46,9 +46,9 @@
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import type { Game, PlayerScore } from '@/types/game'
-import GameRow from '@/components/game/GameRow.vue'
-import GameSearch from '@/components/game/GameSearch.vue'
-import CreateGameModal from '@/components/game/CreateGameModal.vue'
+import GameRow from '@/components/game/sjoelen/GameRow.vue'
+import GameSearch from '@/components/game/sjoelen/GameSearch.vue'
+import CreateGameModal from '@/components/game/sjoelen/CreateGameModal.vue'
 
 export default defineComponent({
   name: 'GamesList',
@@ -77,7 +77,7 @@ export default defineComponent({
   methods: {
     ...mapActions('games', ['fetchGames', 'createGame']),
     navigateToGame(game: Game) {
-      this.$router.push(`/games/${game.id}`)
+      this.$router.push(`/games/sjoelen/${game.id}`)
     },
     handleSearch(query: string) {
       this.searchQuery = query
@@ -91,7 +91,7 @@ export default defineComponent({
     }
   },
   async created() {
-    // await this.fetchGames()
+    await this.fetchGames();
   }
 })
 </script>

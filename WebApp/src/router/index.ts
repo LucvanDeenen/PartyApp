@@ -5,9 +5,10 @@ import Login from '@/views/login/Login.vue'
 import GuestLogin from '@/views/login/GuestLogin.vue'
 import Register from '@/views/login/Register.vue'
 import Profile from '@/views/settings/Profile.vue'
-import Games from '@/views/game/Games.vue'
-import GameDetails from '@/views/game/GameDetails.vue'
 import UserManagement from '@/views/user/UserManagement.vue'
+import GamesHome from '@/views/game/Home.vue'
+import Sjoelen from '@/views/game/sjoelen/Games.vue'
+import SjoelenDetails from '@/views/game/sjoelen/GameDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,12 +35,17 @@ const router = createRouter({
     {
       path: '/games',
       name: 'games',
-      component: Games
+      component: GamesHome
     },
     {
-      path: '/games/:id',
-      name: 'game-details',
-      component: GameDetails,
+      path: '/games/sjoelen',
+      name: 'sjoelen',
+      component: Sjoelen
+    },
+    {
+      path: '/games/sjoelen/:id',
+      name: 'sjoelen-details',
+      component: SjoelenDetails,
       props: true
     },
     {

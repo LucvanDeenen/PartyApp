@@ -10,9 +10,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import type { PlayerScore } from '../../types/game'
+import type { PlayerScore } from '../../../types/game'
 import PlayerScoreRow from './PlayerScoreRow.vue'
-import { useScoreboard } from '../../composables/useScoreboard'
+import { useScoreboard } from '../../../composables/useScoreboard'
 
 export default defineComponent({
   name: 'GameScoreboard',

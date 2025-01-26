@@ -1,30 +1,32 @@
 <template>
-    <v-container>
-        <v-row>
-            <v-col cols="12">
-                <v-data-table :headers="headers" :items="players" :search="search" item-key="id" class="pa-2 pt-6"
-                    :loading="isLoading">
-                    <template v-slot:top>
-                        <h2 class="pb-4 px-4"><v-icon class="mr-2 mb-1">mdi-account</v-icon>User Management</h2>
-                        <div class="d-flex">
-                            <v-text-field variant="outlined" density="compact" v-model="search" label="Search"
-                                class="search-bar mx-4">
-                                <template v-slot:append>
-                                    <v-icon :disabled="refreshed" @click="fetchPlayers">mdi-refresh</v-icon>
-                                </template>
-                            </v-text-field>
-                        </div>
-                    </template>
-                    <template v-slot:item.role="{ item }">
-                        <v-chip :color="getRoleColor(item.role)" dark>{{ item.role }}</v-chip>
-                    </template>
-                    <template v-slot:item.actions="{ item }">
-                        <v-icon @click="deletePlayer(item.id)">mdi-delete</v-icon>
-                    </template>
-                </v-data-table>
-            </v-col>
-        </v-row>
-    </v-container>
+    <page-container>
+        <v-container>
+            <v-row>
+                <v-col cols="12">
+                    <v-data-table :headers="headers" :items="players" :search="search" item-key="id" class="pa-2 pt-6"
+                        :loading="isLoading">
+                        <template v-slot:top>
+                            <h2 class="pb-4 px-4"><v-icon class="mr-2 mb-1">mdi-account</v-icon>User Management</h2>
+                            <div class="d-flex">
+                                <v-text-field variant="outlined" density="compact" v-model="search" label="Search"
+                                    class="search-bar mx-4">
+                                    <template v-slot:append>
+                                        <v-icon :disabled="refreshed" @click="fetchPlayers">mdi-refresh</v-icon>
+                                    </template>
+                                </v-text-field>
+                            </div>
+                        </template>
+                        <template v-slot:item.role="{ item }">
+                            <v-chip class="text-overline" :color="getRoleColor(item.role)">{{ item.role }}</v-chip>
+                        </template>
+                        <template v-slot:item.actions="{ item }">
+                            <v-icon @click="deletePlayer(item.id)">mdi-delete</v-icon>
+                        </template>
+                    </v-data-table>
+                </v-col>
+            </v-row>
+        </v-container>
+    </page-container>
 </template>
 
 <script lang="ts">
@@ -39,7 +41,7 @@ export default defineComponent({
             search: '',
             refreshed: false,
             headers: [
-                { title: 'Role', value: 'role', align: 'start', sortable: true, width: '100px' },
+                { title: 'Role', value: 'role', align: 'center', sortable: true, width: '50px' },
                 { title: 'Name', value: 'name', align: 'start', sortable: true },
                 { title: 'Actions', value: 'actions', align: 'center', sortable: false, width: '50px' }
             ]

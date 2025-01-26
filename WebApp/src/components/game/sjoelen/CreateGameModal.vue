@@ -72,7 +72,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
-import type { Player, PlayerScore } from '../../types/game'
+import type { Player, PlayerScore } from '../../../types/game'
 
 export default defineComponent({
   name: 'CreateGameModal',

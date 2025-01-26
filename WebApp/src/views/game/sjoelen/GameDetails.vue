@@ -54,8 +54,8 @@ import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 import type { Game, Player, PlayerScore } from '@/types/game'
-import PlayerGrid from '@/components/game/PlayerGrid.vue'
-import AddPlayerModal from '@/components/game/AddPlayerModal.vue'
+import PlayerGrid from '@/components/game/sjoelen/PlayerGrid.vue'
+import AddPlayerModal from '@/components/game/sjoelen/AddPlayerModal.vue'
 
 export default defineComponent({
   name: 'GameDetails',
@@ -91,7 +91,7 @@ export default defineComponent({
       addPlayersToGame: 'games/addPlayersToGame'
     }),
     goBackToGames() {
-      this.$router.push('/games')
+      this.$router.push('/games/sjoelen')
     },
     async loadGame() {
       try {

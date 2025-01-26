@@ -21,9 +21,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import type { PlayerScore } from '../../types/game'
+import type { PlayerScore } from '../../../types/game'
 import PlayerTile from './PlayerTile.vue'
-import { useScoreboard } from '../../composables/useScoreboard'
+import { useScoreboard } from '../../../composables/useScoreboard'
 
 export default defineComponent({
   name: 'PlayerGrid',
